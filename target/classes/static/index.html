@@ -5,15 +5,19 @@
 <meta charset="utf-8">
 <title>MasterValues</title>
 <link rel="stylesheet" href="css/app.css">
-<link href='http://fonts.googleapis.com/css?family=Francois+One:regular&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  
+<link
+	href='http://fonts.googleapis.com/css?family=Francois+One:regular&subset=latin,latin-ext'
+	rel='stylesheet' type='text/css'>
+
 </head>
 <body>
-  <div>
-    <label for="inIsisn">Enter Isin: </label>
-		<input id="inIsin" type="text" placeholder="isin">
-		<button id="btIsin" type="button">Search</button>
-  </div>
+	<div>
+		<label for="inIsisn">Enter Isin: </label> 
+		<input  list="isinAC" id="inIsin" type="text" placeholder="isin">
+		<datalist id="isinAC">
+		</datalist>
+		<button id="btIsin" type="button">Search</button></di
+			v>
 	<hr />
 	<table id="tbIsin" border="1">
 		<thead>
@@ -32,7 +36,9 @@
 			</tr>
 		</thead>
 		<tbody>
+		
 		<tbody>
+		
 		<tfoot>
 
 		</tfoot>

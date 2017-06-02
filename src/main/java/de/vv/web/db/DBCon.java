@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
+import de.vv.web.AjaxDemoApplication;
 import de.vv.web.model.MasterValue;
 
 public class DBCon {
@@ -16,7 +17,7 @@ public class DBCon {
 	static Connection con;
 	static String user = "TestUser";
 	static String pw = "TestUser";
-	static String serverName = "DESKTOP-LNOORVK\\SQLEXPRESS";
+	static String serverName = "ACER-2016\\SQLEXPRESS";
 	static String dbName = "MasterData";
 	static int port = 1433;
 
@@ -27,17 +28,40 @@ public class DBCon {
 		SQLServerDataSource ds = new SQLServerDataSource();
 		try {
 			ds.setIntegratedSecurity(false);
-			ds.setUser(user);
-			ds.setPassword(pw);
-			ds.setServerName(serverName);
-			ds.setPortNumber(port);
-			ds.setDatabaseName(dbName);
+			ds.setUser(AjaxDemoApplication.config.user);
+			ds.setPassword(AjaxDemoApplication.config.pw);
+			ds.setServerName(AjaxDemoApplication.config.serverName);
+			ds.setPortNumber(AjaxDemoApplication.config.port);
+			ds.setDatabaseName(AjaxDemoApplication.config.dbName);
 			con = ds.getConnection();
 		}
 		// Handle any errors that may have occurred.
 		catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
+	}
+
+	/**
+	 * supposed to fetch all isin from mastervalues
+	 * which contains input isin
+	 * @param isin
+	 * @return
+	 */
+	public static List<String> getAllIsins(String isin){
+		String queryString = "select distinct mv_isin from vv_mastervalues where  mv_isin like ?;";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setString(1, "%"+isin+"%");
+			ResultSet rs = ps.executeQuery();
+			List<String> isinList = new ArrayList<String>();
+			while (rs.next()) {
+				isinList.add(rs.getString("MV_ISIN"));
+			}
+			return isinList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
