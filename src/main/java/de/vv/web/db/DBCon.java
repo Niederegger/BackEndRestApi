@@ -10,6 +10,7 @@ import java.util.List;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
 import de.vv.web.AjaxDemoApplication;
+import de.vv.web.model.FileData;
 import de.vv.web.model.MasterValue;
 
 public class DBCon {
@@ -41,17 +42,32 @@ public class DBCon {
 		}
 	}
 
+	public static int fileUploadEntry(FileData s) {
+		String queryString = "INSERT INTO [dbo].[vv_fileserver] ([fs_filename], [fs_location], [fs_fk_user]) VALUES (?, ?, ?);";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setString(1, s.filename);
+			ps.setString(2, s.location);
+			ps.setInt(3, s.userId);
+			ps.execute();
+			return 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
 	/**
-	 * supposed to fetch all isin from mastervalues
-	 * which contains input isin
+	 * supposed to fetch all isin from mastervalues which are like isin
+	 * 
 	 * @param isin
 	 * @return
 	 */
-	public static List<String> getAllIsins(String isin){
+	public static List<String> getAllIsins(String isin) {
 		String queryString = "select distinct mv_isin from vv_mastervalues where  mv_isin like ?;";
 		try {
 			PreparedStatement ps = con.prepareStatement(queryString);
-			ps.setString(1, "%"+isin+"%");
+			ps.setString(1, "%" + isin + "%");
 			ResultSet rs = ps.executeQuery();
 			List<String> isinList = new ArrayList<String>();
 			while (rs.next()) {
@@ -65,7 +81,57 @@ public class DBCon {
 	}
 
 	/**
+	 * supposed to fetch all files from fileserver which are like name
+	 * 
+	 * @param isin
+	 * @return
+	 */
+	public static List<String> getAllFiles(String name) {
+		String queryString = "select fs_filename from vv_fileserver where  fs_filename like ?;";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setString(1, "%" + name + "%");
+			ResultSet rs = ps.executeQuery();
+			List<String> fileList = new ArrayList<String>();
+			while (rs.next()) {
+				fileList.add(rs.getString("fs_filename").trim());
+			}
+			return fileList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * returnes file location
+	 * 
+	 * @param isin
+	 * @return
+	 */
+	public static String getFileLocation(String name) {
+		String queryString = "select fs_location from vv_fileserver where  fs_filename=?;";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setString(1, name);
+			ResultSet rs = ps.executeQuery();
+//			List<String> fileList = new ArrayList<String>();
+			while (rs.next()) {
+				return rs.getString("fs_location").trim();
+//				fileList.add(rs.getString("fs_location").trim());
+			}
+//			return fileList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+
+	/**
 	 * fetching isin mastervalues
+	 * 
 	 * @param isin
 	 * @return
 	 */
@@ -81,27 +147,38 @@ public class DBCon {
 				// lade die daten aus dem ResultSet
 				// die Daten werdeng etrimmed um unnoetige whitespaces zu cutten
 				String mvIsin = rs.getString("MV_ISIN");
-				if(mvIsin != null)mvIsin=mvIsin.trim();
+				if (mvIsin != null)
+					mvIsin = mvIsin.trim();
 				String mvSourceId = rs.getString("MV_SOURCE_ID");
-				if(mvSourceId != null)mvSourceId=mvSourceId.trim();
+				if (mvSourceId != null)
+					mvSourceId = mvSourceId.trim();
 				String mvAOD = rs.getString("MV_AS_OF_DATE");
-				if(mvAOD != null)mvAOD=mvAOD.trim();
+				if (mvAOD != null)
+					mvAOD = mvAOD.trim();
 				String mvFN = rs.getString("MV_FIELDNAME");
-				if(mvFN != null)mvFN=mvFN.trim();
+				if (mvFN != null)
+					mvFN = mvFN.trim();
 				String mvTS = rs.getString("MV_TIMESTAMP");
-				if(mvTS != null)mvTS=mvTS.trim();
+				if (mvTS != null)
+					mvTS = mvTS.trim();
 				String mvVal = rs.getString("MV_StringVALUE");
-				if(mvVal != null)mvVal=mvVal.trim();
+				if (mvVal != null)
+					mvVal = mvVal.trim();
 				String mvDO = rs.getString("MV_DATA_ORIGIN");
-				if(mvDO != null)mvDO=mvDO.trim();
+				if (mvDO != null)
+					mvDO = mvDO.trim();
 				String mvUS = rs.getString("MV_URLSOURCE");
-				if(mvUS != null)mvUS=mvUS.trim();
+				if (mvUS != null)
+					mvUS = mvUS.trim();
 				String mvC = rs.getString("MV_COMMENT");
-				if(mvC != null)mvC=mvC.trim();
+				if (mvC != null)
+					mvC = mvC.trim();
 				String mvMic = rs.getString("MV_MIC");
-				if(mvMic != null)mvMic=mvMic.trim();
+				if (mvMic != null)
+					mvMic = mvMic.trim();
 				String mvUI = rs.getString("MV_UPLOAD_ID");
-				if(mvUI != null)mvUI=mvUI.trim();
+				if (mvUI != null)
+					mvUI = mvUI.trim();
 				lmv.add(new MasterValue(mvSourceId, mvIsin, mvAOD, mvFN, mvTS, mvVal, mvDO, mvUS, mvC, mvMic, mvUI));
 			}
 			return lmv;

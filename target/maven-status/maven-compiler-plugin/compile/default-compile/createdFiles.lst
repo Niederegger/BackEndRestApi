@@ -1,5 +1,9 @@
 de\vv\web\model\MasterValue.class
-de\vv\web\controller\IsinController.class
-de\vv\web\config\Config.class
+de\vv\web\model\FileData.class
 de\vv\web\AjaxDemoApplication.class
+de\vv\web\controller\FileController.class
+de\vv\web\controller\IsinController.class
+de\vv\web\functions\FileHandling.class
+de\vv\web\config\Config.class
+de\vv\web\functions\MimeHandling.class
 de\vv\web\db\DBCon.class

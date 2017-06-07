@@ -11,41 +11,55 @@
 
 </head>
 <body>
-	<div>
-		<label for="inIsisn">Enter Isin: </label> 
-		<input  list="isinAC" id="inIsin" type="text" placeholder="isin">
-		<datalist id="isinAC">
-		</datalist>
-		<button id="btIsin" type="button">Search</button></di
-			v>
-	<hr />
-	<table id="tbIsin" border="1">
-		<thead>
-			<tr>
-				<th>MV_SOURCE_ID</th>
-				<th>MV_UPLOAD_ID</th>
-				<th>MV_ISIN</th>
-				<th>MV_MIC</th>
-				<th>MV_AS_OF_DATE</th>
-				<th>MV_FIELDNAME</th>
-				<th>MV_STRINGVALUE</th>
-				<th>MV_TIMESTAMP</th>
-				<th>MV_DATA_ORIGIN</th>
-				<th>MV_URLSOURCE</th>
-				<th>MV_COMMENT</th>
-			</tr>
-		</thead>
-		<tbody>
-		
-		<tbody>
-		
-		<tfoot>
+	<div class="container">
+		<div> <!-- Download -->
+			<button id="btFileFetch" type="button">Fetch</button>
+			<input type="text" id="dwlFile" /> <label id="uploadStatus"></label>
+			<ul id="dul">
+			</ul>
+		</div><!-- /Download -->
+		<hr>
+		<div> <!-- Upload -->
+			<button id="btFileUpload" type="button">Upload</button>
+			<input type="file" id="uplFile" /> <label id="uploadStatus"></label>
+		</div><!-- /Upload -->
+		<hr>
+		<div><!-- ISIN -->
+			<div>
+				<label for="inIsisn">Enter Isin: </label> <input list="isinAC"
+					id="inIsin" type="text" placeholder="isin">
+				<datalist id="isinAC">
+				</datalist>
+				<button id="btIsin" type="button">Search</button>
+			</div>
+			<hr />
+			<table id="tbIsin" border="1">
+				<thead>
+					<tr>
+						<th>MV_SOURCE_ID</th>
+						<th>MV_UPLOAD_ID</th>
+						<th>MV_ISIN</th>
+						<th>MV_MIC</th>
+						<th>MV_AS_OF_DATE</th>
+						<th>MV_FIELDNAME</th>
+						<th>MV_STRINGVALUE</th>
+						<th>MV_TIMESTAMP</th>
+						<th>MV_DATA_ORIGIN</th>
+						<th>MV_URLSOURCE</th>
+						<th>MV_COMMENT</th>
+					</tr>
+				</thead>
+				<tbody>
+				<tbody>
+				<tfoot>
 
-		</tfoot>
-	</table>
-  <div class="container"></div>
-  <script src="js/angular.min.js" type="text/javascript"></script>
-  <script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
-  <script src="js/app.js" type="text/javascript"></script>
+				</tfoot>
+			</table>
+		</div><!-- /ISIN -->
+	</div>
+	<!-- Scripts  -->
+	<script src="js/jquery-3.2.1.js" type="text/javascript"></script>
+	<script src="js/angular.min.js" type="text/javascript"></script>
+	<script src="js/app.js" type="text/javascript"></script>
 </body>
 </html>

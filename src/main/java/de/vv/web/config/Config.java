@@ -7,7 +7,8 @@ public class Config {
   "pw": "TestUser",
   "serverName": "DESKTOP-LNOORVK\\SQLEXPRESS",
   "dbName": "MasterData",
-  "port": 1433
+  "port": 1433,
+  "fileLocation" : "D:\\Files\\"
 }
 */
 	public String user;
@@ -15,4 +16,5 @@ public class Config {
 	public String serverName;
 	public String dbName;
 	public int port;
+	public String fileLocation = "D:\\Files\\";
 }
