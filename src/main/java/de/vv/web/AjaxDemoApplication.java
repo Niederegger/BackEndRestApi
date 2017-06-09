@@ -13,6 +13,7 @@ import com.google.gson.JsonSyntaxException;
 import de.vv.web.config.Config;
 import de.vv.web.db.DBCon;
 import de.vv.web.functions.MimeHandling;
+import de.vv.web.model.UserRoles;
 
 @SpringBootApplication
 public class AjaxDemoApplication {
@@ -27,6 +28,7 @@ public class AjaxDemoApplication {
 		if(loadConfig(args[0])){
 			DBCon.openConnection();
 			MimeHandling.initMappings();
+			UserRoles.loadRoles();
 			SpringApplication.run(AjaxDemoApplication.class, args);
 		} else 
 			return;

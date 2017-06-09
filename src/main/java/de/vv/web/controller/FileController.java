@@ -25,6 +25,7 @@ import de.vv.web.functions.MimeHandling;
 import de.vv.web.model.FileData;
 
 @Controller
+@RequestMapping("/file")
 public class FileController {
 
 	/**

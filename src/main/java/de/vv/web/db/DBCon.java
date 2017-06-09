@@ -10,17 +10,19 @@ import java.util.List;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
 import de.vv.web.AjaxDemoApplication;
+import de.vv.web.model.Account;
 import de.vv.web.model.FileData;
 import de.vv.web.model.MasterValue;
+import de.vv.web.model.UserRole;
+import de.vv.web.model.UserRoles;
 
 public class DBCon {
 
+	// ---------------------------------------------------------------------------------
+	// DB Connection
+	// ---------------------------------------------------------------------------------
+
 	static Connection con;
-	static String user = "TestUser";
-	static String pw = "TestUser";
-	static String serverName = "ACER-2016\\SQLEXPRESS";
-	static String dbName = "MasterData";
-	static int port = 1433;
 
 	/**
 	 * openin Connection to Ms Sql Database
@@ -42,6 +44,141 @@ public class DBCon {
 		}
 	}
 
+	/**
+	 * closing connection
+	 */
+	public static void closeConnection() {
+		try {
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// ---------------------------------------------------------------------------------
+	// Account
+	// ---------------------------------------------------------------------------------
+
+	public static void registerAccount(Account acc) {
+		String queryString = "INSERT INTO [dbo].[vv_accounts]([acc_username],[acc_password],[acc_email],[acc_role])"
+				+ " VALUES (?,?,?,?);";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			int psCount = 1;
+			ps.setString(psCount++, acc.username);
+			ps.setString(psCount++, acc.password);
+			ps.setString(psCount++, acc.email);
+			ps.setInt(psCount++, UserRoles.getRoleId(acc.role));
+			ps.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Account getAccountById(long id) {
+		String queryString = "SELECT " // join query account with roles
+				+ "[dbo].[vv_accounts].[acc_id],"
+				+ "[dbo].[vv_accounts].[acc_username],"
+				+ "[dbo].[vv_accounts].[acc_password],"
+				+ "[dbo].[vv_accounts].[acc_email],"
+				+ "[dbo].[vv_user_roles].[UR_ROLE]"
+				+"	FROM [dbo].[vv_accounts], [dbo].[vv_user_roles] "
+				+"where [dbo].[vv_accounts].[acc_id]=? "
+				+ "AND [dbo].[vv_accounts].[acc_role]=[dbo].[vv_user_roles].[UR_ID];";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setLong(1, id);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				//long id, String username, String password, String email, String role
+				return new Account(rs.getLong("acc_id"), rs.getString("acc_username"), 
+						rs.getString("acc_password"), rs.getString("acc_email"), rs.getString("UR_ROLE"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static boolean isAccountEmailAvailable(String email) {
+		String queryString = "SELECT count(*) as 'emailCount'"
+				+"	FROM [dbo].[vv_accounts] "
+				+"where [dbo].[vv_accounts].[acc_email]=?;";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setString(1, email);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				// returnes true if db does not contain more than 0 same emails
+				return !(rs.getInt("emailCount") >= 0);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	public static Account getAccountByEmail(String email) {
+		String queryString = "SELECT " // join query account with roles
+				+ "[dbo].[vv_accounts].[acc_id],"
+				+ "[dbo].[vv_accounts].[acc_username],"
+				+ "[dbo].[vv_accounts].[acc_password],"
+				+ "[dbo].[vv_accounts].[acc_email],"
+				+ "[dbo].[vv_user_roles].[UR_ROLE]"
+				+"	FROM [dbo].[vv_accounts], [dbo].[vv_user_roles] "
+				+"where [dbo].[vv_accounts].[acc_email]=? "
+				+ "AND [dbo].[vv_accounts].[acc_role]=[dbo].[vv_user_roles].[UR_ID];";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setString(1, email);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				//long id, String username, String password, String email, String role
+				return new Account(rs.getLong("acc_id"), rs.getString("acc_username"), 
+						rs.getString("acc_password"), rs.getString("acc_email"), rs.getString("UR_ROLE"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static int getRole(String role){
+		String queryString = "select [UR_ID] from [vv_user_roles] where ur_role=?;";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setString(1, role);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				return rs.getInt("UR_ID");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1; // invalid role
+	}
+	
+	public static List<UserRole> getAllRoles(){
+		String queryString = "select [UR_ID], [UR_ROLE] from [vv_user_roles];";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ResultSet rs = ps.executeQuery();
+			List<UserRole> lur = new ArrayList<UserRole>();
+			while (rs.next()) {
+				lur.add(new UserRole(rs.getInt("UR_ID"), rs.getString("UR_ROLE")));
+			}
+			return lur;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null; // invalid role
+	}
+
+	// ---------------------------------------------------------------------------------
+	// File Server
+	// ---------------------------------------------------------------------------------
+
 	public static int fileUploadEntry(FileData s) {
 		String queryString = "INSERT INTO [dbo].[vv_fileserver] ([fs_filename], [fs_location], [fs_fk_user]) VALUES (?, ?, ?);";
 		try {
@@ -55,29 +192,6 @@ public class DBCon {
 			e.printStackTrace();
 		}
 		return -1;
-	}
-
-	/**
-	 * supposed to fetch all isin from mastervalues which are like isin
-	 * 
-	 * @param isin
-	 * @return
-	 */
-	public static List<String> getAllIsins(String isin) {
-		String queryString = "select distinct mv_isin from vv_mastervalues where  mv_isin like ?;";
-		try {
-			PreparedStatement ps = con.prepareStatement(queryString);
-			ps.setString(1, "%" + isin + "%");
-			ResultSet rs = ps.executeQuery();
-			List<String> isinList = new ArrayList<String>();
-			while (rs.next()) {
-				isinList.add(rs.getString("MV_ISIN"));
-			}
-			return isinList;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	/**
@@ -102,7 +216,7 @@ public class DBCon {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * returnes file location
 	 * 
@@ -115,19 +229,44 @@ public class DBCon {
 			PreparedStatement ps = con.prepareStatement(queryString);
 			ps.setString(1, name);
 			ResultSet rs = ps.executeQuery();
-//			List<String> fileList = new ArrayList<String>();
+			// List<String> fileList = new ArrayList<String>();
 			while (rs.next()) {
 				return rs.getString("fs_location").trim();
-//				fileList.add(rs.getString("fs_location").trim());
+				// fileList.add(rs.getString("fs_location").trim());
 			}
-//			return fileList;
+			// return fileList;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
+
+	// ---------------------------------------------------------------------------------
+	// MasterValues
+	// ---------------------------------------------------------------------------------
+
+	/**
+	 * supposed to fetch all isin from mastervalues which are like isin
+	 * 
+	 * @param isin
+	 * @return
+	 */
+	public static List<String> getAllIsins(String isin) {
+		String queryString = "select distinct mv_isin from vv_mastervalues where  mv_isin like ?;";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setString(1, "%" + isin + "%");
+			ResultSet rs = ps.executeQuery();
+			List<String> isinList = new ArrayList<String>();
+			while (rs.next()) {
+				isinList.add(rs.getString("MV_ISIN"));
+			}
+			return isinList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	/**
 	 * fetching isin mastervalues
@@ -187,17 +326,5 @@ public class DBCon {
 		}
 
 		return null;
-	}
-
-	/**
-	 * closing connection
-	 */
-	public static void closeConnection() {
-		try {
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }
