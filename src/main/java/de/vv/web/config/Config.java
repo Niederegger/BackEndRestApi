@@ -17,4 +17,5 @@ public class Config {
 	public String dbName;
 	public int port;
 	public String fileLocation = "D:\\Files\\";
+	public int thisPort;
 }

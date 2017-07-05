@@ -8,6 +8,9 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -61,76 +64,13 @@ public class AjaxDemoApplication {
 		return false;
 	}
 	
-//	@Configuration
-//	public class MvcConfig extends WebMvcConfigurerAdapter {
-//
-//	    @Override
-//	    public void addViewControllers(ViewControllerRegistry registry) {
-//	        registry.addViewController("/**/*.html").setViewName("");
-//	    }
-//
-//	}
-	
-//	/**
-//	 * This application is secured at both the URL level for some parts, and the method level for other parts. The URL
-//	 * security is shown inside this code, while method-level annotations are enabled at by
-//	 * {@link EnableGlobalMethodSecurity}.
-//	 *
-//	 * @author Greg Turnquist
-//	 * @author Oliver Gierke
-//	 */
-//	@Configuration
-//	@EnableGlobalMethodSecurity(prePostEnabled = true)
-//	@EnableWebSecurity
-//	static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-//
-//		/**
-//		 * This section defines the user accounts which can be used for authentication as well as the roles each user has.
-//		 * 
-//		 * @see org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#configure(org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder)
-//		 */
-//		@Override
-//		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//
-//			auth.inMemoryAuthentication().//
-//					withUser("user").password("wassabi").roles("USER").and().//
-//					withUser("admin").password("coolio").roles("USER", "ADMIN");
-//		}
-//
-//		/**
-//		 * This section defines the security policy for the app.
-//		 * <p>
-//		 * <ul>
-//		 * <li>BASIC authentication is supported (enough for this REST-based demo).</li>
-//		 * <li>/employees is secured using URL security shown below.</li>
-//		 * <li>CSRF headers are disabled since we are only testing the REST interface, not a web one.</li>
-//		 * </ul>
-//		 * NOTE: GET is not shown which defaults to permitted.
-//		 *
-//		 * @param http
-//		 * @throws Exception
-//		 * @see org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)
-//		 */
-//		@Override
-//		protected void configure(HttpSecurity http) throws Exception {
-//
-//			http.httpBasic().and().authorizeRequests().//
-//					antMatchers("/**/*.html").permitAll().anyRequest().authenticated();
-//		}
-//	}
-//	
-//	@Bean
-//    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-//        return args -> {
-//
-//            System.out.println("Let's inspect the beans provided by Spring Boot:");
-//
-//            String[] beanNames = ctx.getBeanDefinitionNames();
-//            Arrays.sort(beanNames);
-//            for (String beanName : beanNames) {
-//                System.out.println(beanName);
-//            }
-//
-//        };
-//    }
+	@Controller
+	public class ServletConfig {
+	    @Bean
+	    public EmbeddedServletContainerCustomizer containerCustomizer() {
+	        return (container -> {
+	            container.setPort(config.thisPort);
+	        });
+	    }
+	}
 }
