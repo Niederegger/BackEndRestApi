@@ -1,4 +1,13 @@
-# WebFront
+# BackEnd
+Before Compilation, insert Files from dist folder of Angular FrontEnd into resource/static
+-> this way you get the benefits of FrontEnd developed Angular Application with Rest Api Spring Boot
+
+inside resource/application.properties server Port is handled like followed:
+8080 as Developement Port
+80 as deployment Port
+
+you can adjust this as you wish
+
 compile:
 ```
 mvn clean package
