@@ -25,7 +25,7 @@ import de.vv.web.functions.MimeHandling;
 import de.vv.web.model.FileData;
 
 @Controller
-@RequestMapping("/file")
+@RequestMapping("/api/file")
 public class FileController {
 
 	/**
@@ -38,14 +38,10 @@ public class FileController {
 	public @ResponseBody String uploadFileHandler(@RequestParam("uploadfile") MultipartFile uploadfile) {
 		String name = uploadfile.getOriginalFilename(); // name der datei
 		if (!uploadfile.isEmpty()) {
-			try {
-				File dir = new File(AjaxDemoApplication.config.fileLocation); // directory
-																				// des
-																				// fileservers
-				FileData fh = new FileData(name, (dir.getAbsolutePath() + File.separator + name), -1); // informationen
-																										// fuer
-																										// db
-
+			try { // directory des fileservers
+				File dir = new File(AjaxDemoApplication.config.fileLocation);
+				// informationen fuer db
+				FileData fh = new FileData(name, (dir.getAbsolutePath() + File.separator + name), -1);
 				// -------------------------------------------------------------
 				// todo: validate whether this file is allowed to be saved!
 				// -------------------------------------------------------------
@@ -71,19 +67,6 @@ public class FileController {
 
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
 	public ResponseEntity<FileSystemResource> downloadFile(@RequestParam("name") String name) {
-		// try {
-		// String location = DBCon.getFileLocation(name);
-		// ClassPathResource file = new ClassPathResource(location);
-		//
-		// return ResponseEntity.ok().contentLength(file.contentLength())
-		// .contentType(MediaType.parseMediaType("application/octet-stream"))
-		// .body(new InputStreamResource(file.getInputStream()));
-		//
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// return null;
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.parseMediaType(MimeHandling.GetMimeType(name)));
 		headers.add("content-disposition", "attachment; filename=" + name);

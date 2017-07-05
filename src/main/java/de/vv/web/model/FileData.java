@@ -11,9 +11,9 @@ public class FileData {
 	public int userId = -1;			// welcher user hat diese datei hochgeladen
 
 	// names of table comuns
-	public final String dbFilename = "[fs_filename]";	
-	public final String dbLocation = "[fs_location]";
-	public final String dbUserId = "[fs_fk_user]";
+	public final String dbFilename = "fs_filename";	
+	public final String dbLocation = "fs_location";
+	public final String dbUserId = "fs_fk_user";
 
 	// empty constructor
 	public FileData(){}
