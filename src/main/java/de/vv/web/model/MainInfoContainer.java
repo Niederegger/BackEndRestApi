@@ -36,4 +36,19 @@ public class MainInfoContainer {
 		}
 		return false;
 	}
+	
+	public String hm2Str(HashMap<String, MainInfo> hm){
+		StringBuilder sb = new StringBuilder();
+		for(String s : hm.keySet()){
+			sb.append(s);
+			sb.append(":\n");
+			for(D2Arr mi : hm.get(s).info){
+				sb.append("\t");
+				sb.append(mi);
+				sb.append("\n");
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 }

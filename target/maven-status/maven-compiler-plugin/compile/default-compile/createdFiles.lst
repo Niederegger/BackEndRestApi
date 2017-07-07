@@ -5,6 +5,7 @@ de\vv\web\AjaxDemoApplication$ServletConfig.class
 de\vv\web\config\GlobalScope.class
 de\vv\web\model\D2Arr.class
 de\vv\web\model\AuthorityModel.class
+de\vv\web\controller\AdviseController.class
 de\vv\web\model\MainInfoContainer.class
 de\vv\web\controller\IsinController.class
 de\vv\web\functions\BasicFunctions.class

@@ -7,6 +7,8 @@ package de.vv.web.model;
  *
  */
 public class D2Arr {
+	public D2Arr() {	}
+	
 	public D2Arr(String l, String v) {
 		lvl2 = l == null ? "" : l;
 		val = v == null ? "" : v;
@@ -14,4 +16,15 @@ public class D2Arr {
 
 	public String lvl2;
 	public String val;
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if(lvl2 != ""){
+			sb.append(lvl2);
+			sb.append(": ");
+		}
+		sb.append(val);
+		return sb.toString();
+	}
 }

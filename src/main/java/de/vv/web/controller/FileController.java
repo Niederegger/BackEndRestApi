@@ -3,8 +3,6 @@ package de.vv.web.controller;
 import java.io.File;
 import java.util.List;
 
-import javax.activation.MimeType;
-
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;

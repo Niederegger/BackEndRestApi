@@ -2,7 +2,9 @@ package de.vv.web.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.ModelAttribute;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,10 +59,21 @@ public class IsinController {
 		return null;
 	}
 	
-	@RequestMapping(value = "editInfo", method = { RequestMethod.POST })
-	public MainInfo editMainInfo(@ModelAttribute("info") MainInfo info){
-//		if(DBCon.doesIsinExist(info))
-		return null;
+//	@RequestMapping(value = "editInfo", method = { RequestMethod.POST })
+//	public MainInfo editMainInfo(HttpServletRequest request, @RequestBody MainInfoContainer info){
+////		if(DBCon.doesIsinExist(info))
+//		printRequestInfo(request);
+//		if(request != null){
+//			System.out.println("rAddr: " + request.getRemoteAddr());
+//		}
+//		System.out.println(info.hm2Str(info.data));
+//		return null;
+//	}
+	
+	void printRequestInfo(HttpServletRequest r){
+		System.out.println("rUser: " + r.getRemoteUser());
+		System.out.println("rAddr: " + r.getRemoteAddr());
+		System.out.println("rHost: " + r.getRemoteHost());
 	}
 	
 	@RequestMapping("/wpd")
