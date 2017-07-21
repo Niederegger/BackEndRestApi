@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.vv.web.db.DBCon;
@@ -18,9 +17,9 @@ import de.vv.web.model.UserModel;
 public class AccountController {
 
 	
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public ResponseEntity<FileSystemResource> login(@RequestParam("name") String name) {
-	
+	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = "application/json")
+	public ResponseEntity<FileSystemResource> login(@RequestBody UserModel user) {
+		
 		return null;
 	}
 	

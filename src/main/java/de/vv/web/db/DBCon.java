@@ -97,7 +97,7 @@ public class DBCon {
 				//int id, String username, String password, String email, boolean enabled, String authority
 				return new UserModel(rs.getInt(UserModel.dbId), rs.getString(UserModel.dbUsername), 
 						rs.getString(UserModel.dbPassword), rs.getString(UserModel.dbEmail), 
-						rs.getBoolean(UserModel.dbEnabled), rs.getString(AuthorityModel.dbAuthority));
+						rs.getBoolean(UserModel.dbEnabled), rs.getString(UserRoleModel.dbAuthority));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -147,12 +147,17 @@ public class DBCon {
 	// ---------------------------------------------------------------------------------
 
 	public static int fileUploadEntry(FileData s) {
-		String queryString = "INSERT INTO dbo.vv_fileserver (fs_filename, fs_location, fs_fk_user) VALUES (?, ?, ?);";
+		String queryString = "INSERT INTO dbo.vv_fileserver (fs_filename, fs_location, fs_fk_user, fs_establishment, fs_ip, fs_comment) VALUES (?, ?, ?, ?, ?, ?);";
 		try {
 			PreparedStatement ps = con.prepareStatement(queryString);
-			ps.setString(1, s.filename);
-			ps.setString(2, s.location);
-			ps.setInt(3, s.userId);
+			int count = 1;
+			ps.setString(count++, s.filename);
+			ps.setString(count++, s.location);
+			ps.setInt(count++, s.userId);
+			ps.setString(count++, s.establishment);
+			ps.setString(count++, s.ip);
+			ps.setString(count++, s.comment);
+			
 			ps.execute();
 			return 1;
 		} catch (SQLException e) {
@@ -167,41 +172,35 @@ public class DBCon {
 	 * @param isin
 	 * @return
 	 */
-	public static List<String> getAllFiles(String name) {
-		String queryString = "select fs_filename from vv_fileserver where  fs_filename like ?;";
+	public static FileModelContainer getAllFiles() {
 		try {
-			PreparedStatement ps = con.prepareStatement(queryString);
-			ps.setString(1, "%" + name + "%");
+			FileModelContainer fm = new FileModelContainer();
+			PreparedStatement ps = con.prepareStatement(fm.queryString);
 			ResultSet rs = ps.executeQuery();
-			List<String> fileList = new ArrayList<String>();
-			while (rs.next()) {
-				fileList.add(rs.getString("fs_filename").trim());
-			}
-			return fileList;
+			fm.fill(rs);
+			return fm;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-
+	
 	/**
 	 * returnes file location
 	 * 
 	 * @param isin
 	 * @return
 	 */
-	public static String getFileLocation(String name) {
-		String queryString = "select fs_location from vv_fileserver where  fs_filename=?;";
+	public static String getFileLocation(String fileName, String timeStamp) {
+		String queryString = "select fs_location from vv_fileserver where  fs_filename=? and fs_timestamp=?;";
 		try {
 			PreparedStatement ps = con.prepareStatement(queryString);
-			ps.setString(1, name);
+			ps.setString(1, fileName);
+			ps.setString(2, timeStamp);
 			ResultSet rs = ps.executeQuery();
-			// List<String> fileList = new ArrayList<String>();
 			while (rs.next()) {
 				return rs.getString("fs_location").trim();
-				// fileList.add(rs.getString("fs_location").trim());
 			}
-			// return fileList;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -213,19 +212,36 @@ public class DBCon {
 	// ---------------------------------------------------------------------------------
 
 
-//	public static void editMainInfo(MainInfo data){
-//		String insertDefault = "INSERT INTO vv_mastervalues_upload"
-//				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
-//				+ "(?,?,?,?,?,?);";
-//		PreparedStatement preparedStatement = null;
-//		int stmtCount = 1;
-//		try {
-//			PreparedStatement ps = con.prepareStatement(insertDefault);
-//			
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	public static void uplaodData(UploadContainer data){
+		try {
+			PreparedStatement ps;
+			int stmtCount;
+			// patching edit
+			for(int i = 0; i < data.fieldName.size(); i++){
+				// (MVU_DATA_ORIGIN, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT)
+				ps = con.prepareStatement(data.query);
+				stmtCount = 1;
+				ps.setString(stmtCount++, data.origin); // Data Origin
+				ps.setString(stmtCount++, data.source);
+				ps.setString(stmtCount++, data.isin);
+				ps.setString(stmtCount++, data.mic);
+				ps.setString(stmtCount++, data.fieldName.get(i));
+				ps.setString(stmtCount++, data.values.get(i));
+				ps.setString(stmtCount++, data.comment);
+				ps.executeUpdate();
+			}
+			// executing upload to main table
+			stmtCount = 1;
+			ps = con.prepareStatement("exec vvsp_import_uploadV2 ?, ?, ?, ?;");
+			ps.setString(stmtCount++, data.source); // SourceId
+			ps.setString(stmtCount++, data.origin); // Data Origin
+			ps.setString(stmtCount++, data.urlSource); // UrlSource
+			ps.setString(stmtCount++, data.comment); // Comment
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public static boolean doesIsinExist(String isin){
 		if(isin.length() == 12){

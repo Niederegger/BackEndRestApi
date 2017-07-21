@@ -35,4 +35,29 @@ public class BasicFunctions {
 		return password;
 	}
 	
+	public static final String[] uploadExtension = {
+			"xlsx",
+			"xlsm",
+			"xlsb",
+			"xltx",
+			"xltm",
+			"xls",
+			"xlt",
+			"xml",
+			"xlam",
+			"xla",
+			"xlw",
+			"xlr",
+			"csv",
+			"pdf",
+	};
+	
+	public static boolean validUploadType(String file){
+		String[] tmp = file.split("\\.");
+		String ending = tmp[tmp.length-1].toLowerCase();
+		for(String s : uploadExtension){
+			if(ending.equals(s)) return true;
+		} return false;
+	}
+	
 }

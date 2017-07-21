@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.vv.web.db.DBCon;
-
 //serves as a container for returned values from vvsp_get_maininfo
 public class MainInfoContainer {
 	// stores data with key - value pairs
@@ -32,11 +30,20 @@ public class MainInfoContainer {
 
 	public boolean checkIsin() {
 		if (data.containsKey("ISIN")) {
-			return DBCon.doesIsinExist(data.get("ISIN").info.get(0).val);
+			return data.containsKey("ISIN");
 		}
 		return false;
 	}
 	
+	public String getIsin() {
+		if(checkIsin()){
+			return data.get("ISIN").info.get(0).val;
+		}
+		return "";
+	}
+	
+	
+	//  hashMap to String
 	public String hm2Str(HashMap<String, MainInfo> hm){
 		StringBuilder sb = new StringBuilder();
 		for(String s : hm.keySet()){
@@ -50,5 +57,25 @@ public class MainInfoContainer {
 			sb.append("\n");
 		}
 		return sb.toString();
+	}
+	
+	public UploadContainer toUploadContainer(){
+		String isin = getIsin();
+		if(isin.length()!=12)return null;
+		UploadContainer uc = new UploadContainer();
+		uc.isin = isin;
+		MainInfo mi;
+		for(String s : data.keySet()){
+			mi = data.get(s);
+			for(D2Arr info : mi.info){
+				if(info.lvl2==null||info.lvl2==""){
+					uc.fieldName.add(s);
+				} else {
+					uc.fieldName.add(info.lvl2);
+				}
+				uc.values.add(info.val);
+			}
+		}
+		return uc;
 	}
 }

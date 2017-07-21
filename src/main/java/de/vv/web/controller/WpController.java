@@ -16,7 +16,7 @@ import de.vv.web.model.*;
 
 @RestController
 @RequestMapping("/api/wp")
-public class IsinController {
+public class WpController {
 
 	@RequestMapping("/isin2")
 	public List<MasterValue> isin(@RequestParam(value = "isin", required = true) String isin) {
@@ -37,7 +37,7 @@ public class IsinController {
 		if (v.length() <= 12) { // check ob die isin wirklich 12 characters lang ist
 			System.out.println("called for isin: "+v);
 			return DBCon.getIsinInfo(v); // return eine Lister der Daten als Json Object
-		} // falls die isin niccht 12 Characters hat wird null returned
+		} // falls die isin nicht 12 Characters hat wird null returned
 		return null;
 	}
 	
@@ -52,34 +52,39 @@ public class IsinController {
 	
 	@RequestMapping("info")
 	public MainInfoContainer mainInfo(@RequestParam(value = "v", required = true) String v){
-		if (v.length() <= 12) { // check ob die isin wirklich 12 characters lang ist
+		if (v.length() == 12 || v.length() == 6) { // check ob die isin wirklich 12 characters lang ist
 			System.out.println("MainInfo called: "+v);
 			return DBCon.getMainInfo(v); // return eine Lister der Daten als Json Object
 		} // falls die isin niccht 12 Characters hat wird null returned
 		return null;
 	}
 	
-//	@RequestMapping(value = "editInfo", method = { RequestMethod.POST })
-//	public MainInfo editMainInfo(HttpServletRequest request, @RequestBody MainInfoContainer info){
-////		if(DBCon.doesIsinExist(info))
-//		printRequestInfo(request);
-//		if(request != null){
-//			System.out.println("rAddr: " + request.getRemoteAddr());
-//		}
-//		System.out.println(info.hm2Str(info.data));
-//		return null;
-//	}
+	@RequestMapping(value = "editInfo", method = { RequestMethod.POST })
+	public MainInfoContainer editMainInfo(HttpServletRequest request, @RequestBody MainInfoContainer info){
+		printRequestInfo(request);
+		if(request != null){
+			UploadContainer uc = info.toUploadContainer();
+			String source = request.getHeader("X-Forwarded-For") !=null ? 
+					request.getHeader("X-Forwarded-For") : request.getRemoteAddr();
+			uc.setData("AnonUser", source, "changed by User", ""); // source, origin, comment, mic) 
+			DBCon.uplaodData(uc);
+			System.out.println("Data inserted by: " + source);
+			return info;
+		} else System.out.println();
+		return null;
+	}
 	
 	void printRequestInfo(HttpServletRequest r){
 		System.out.println("rUser: " + r.getRemoteUser());
 		System.out.println("rAddr: " + r.getRemoteAddr());
 		System.out.println("rHost: " + r.getRemoteHost());
+		System.out.println("XForward: " +  r.getHeader("X-Forwarded-For"));
 	}
 	
 	@RequestMapping("/wpd")
 	public List<WPDModel> wpd(@RequestParam(value = "isin", required = true) String isin) {
 		if (isin.length() <= 12) { // check ob die isin wirklich 12 characters lang ist
-			List<WPDModel> list = DBCon.getWpd(isin); // fetche die Daten																// aus der Db
+			List<WPDModel> list = DBCon.getWpd(isin); // fetche die Daten aus der Db
 			return list; // return eine Lister der Daten als Json Object
 		} // falls die isin niccht 12 Characters hat wird null returned
 		return null;

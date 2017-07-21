@@ -23,6 +23,7 @@ import de.vv.web.functions.MimeHandling;
 import de.vv.web.functions.Scheduler;
 
 @SpringBootApplication
+// this part disables security
 @EnableAutoConfiguration(exclude = {
         SecurityAutoConfiguration.class,
         DataSourceAutoConfiguration.class})

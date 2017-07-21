@@ -23,24 +23,25 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<sqlserver.version>6.1.0.jre8</sqlserver.version>
+		<oauth.version>2.1.1.RELEASE</oauth.version>
 	</properties>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-logging</artifactId>
 		</dependency>
-
 
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
@@ -72,6 +73,7 @@
 			<version>2.4</version>
 		</dependency>
 	</dependencies>
+
 
 	<build>
 		<plugins>

@@ -14,14 +14,14 @@ public class UserModel {
 	public String username;
 	public String password;
 	public String email;
-	public boolean enabled;
-	public String authority;
+	public boolean emailVerified;
+	public String role;
 	
 	public static String dbId = "u_id";
 	public static String dbUsername = "u_username";
 	public static String dbPassword = "u_password";
 	public static String dbEmail = "u_email";
-	public static String dbEnabled = "u_enabled";
+	public static String dbEnabled = "u_email_verified";
 	
 	public UserModel(){}
 	
@@ -33,15 +33,15 @@ public class UserModel {
 		this.username = username;
 		this.password = password;
 		this.email = email;
-		this.enabled = enabled;
+		this.emailVerified = enabled;
 	}
 	
 	public UserModel(String username, String password, String email, boolean enabled, String authority){
 		this.username = username;
 		this.password = password;
 		this.email = email;
-		this.enabled = enabled;
-		this.authority = authority;
+		this.emailVerified = enabled;
+		this.role = authority;
 	}
 	
 	public UserModel(int id, String username, String password, String email, boolean enabled){
@@ -49,7 +49,7 @@ public class UserModel {
 		this.username = username;
 		this.password = password;
 		this.email = email;
-		this.enabled = enabled;
+		this.emailVerified = enabled;
 	}
 	
 	public UserModel(int id, String username, String password, String email, boolean enabled, String authority){
@@ -57,8 +57,8 @@ public class UserModel {
 		this.username = username;
 		this.password = password;
 		this.email = email;
-		this.enabled = enabled;
-		this.authority = authority;
+		this.emailVerified = enabled;
+		this.role = authority;
 	}
 	
 	@Override
@@ -72,9 +72,9 @@ public class UserModel {
 		sb.append("\nPassword: ");
 		sb.append(password);
 		sb.append("\nenabled: ");
-		sb.append(enabled);
+		sb.append(emailVerified);
 		sb.append("\nauthority: ");
-		sb.append(authority);
+		sb.append(role);
 		sb.append("\n");
 		return sb.toString();
 	}

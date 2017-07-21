@@ -1,7 +1,8 @@
 package de.vv.web.controller;
 
 import java.io.File;
-import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
@@ -16,11 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import de.vv.web.AjaxDemoApplication;
 import de.vv.web.db.DBCon;
-import de.vv.web.functions.FileHandling;
-import de.vv.web.functions.MimeHandling;
-import de.vv.web.model.FileData;
+import de.vv.web.functions.*;
+import de.vv.web.model.*;
 
 @Controller
 @RequestMapping("/api/file")
@@ -33,42 +32,50 @@ public class FileController {
 	 * @return
 	 */
 	@RequestMapping(value = "/uploadFile", headers = "content-type=multipart/*", method = RequestMethod.POST)
-	public @ResponseBody String uploadFileHandler(@RequestParam("uploadfile") MultipartFile uploadfile) {
-		String name = uploadfile.getOriginalFilename(); // name der datei
-		if (!uploadfile.isEmpty()) {
+	public @ResponseBody String uploadFileHandler(HttpServletRequest request, 
+			@RequestParam(value = "establishment") String establishment,
+			@RequestParam(value = "comment") String comment,
+	        @RequestParam(value = "file") MultipartFile file) {
+		FileUploadInformation fui = new FileUploadInformation();
+		fui.comment = comment.trim();
+		fui.establishment = establishment.trim();
+		fui.uploadfile = file;
+		System.out.println(fui.toString());
+		if (fui.valid()) {
 			try { // directory des fileservers
-				File dir = new File(AjaxDemoApplication.config.fileLocation);
-				// informationen fuer db
-				FileData fh = new FileData(name, (dir.getAbsolutePath() + File.separator + name), -1);
-				// -------------------------------------------------------------
-				// todo: validate whether this file is allowed to be saved!
-				// -------------------------------------------------------------
 
 				// store file
-				FileHandling.storeFile(uploadfile, name, dir); // speichern der
-																// datei
+				String location = FileHandling.storeFile(fui, "-1".trim());
+				if(location == null) return "Error when saving File.";
 				// create entry to db
-				DBCon.fileUploadEntry(fh); // eintrag in die db
-				return "You successfully uploaded file => " + name;
+				DBCon.fileUploadEntry(fui.toFileData(request.getRemoteAddr(), location, -1)); // eintrag in die db
+				return "Successfully uploaded file => " + fui.name;
 			} catch (Exception e) {
-				return "You failed to upload " + name + " => " + e.getMessage();
+				e.printStackTrace();
+				return "Failed to upload => " + e.getMessage();
 			}
 		} else {
-			return "You failed to upload " + name + " because the file was empty.";
+			return "Failed to upload because upload was invalid.";
 		}
 	}
+	
 
-	@RequestMapping(value = "/fetchFile", method = RequestMethod.GET)
-	public @ResponseBody List<String> fetchFiles(@RequestParam("name") String name) {
-		return DBCon.getAllFiles(name == "*" ? null : name);
+	@RequestMapping(value = "/fetchFileData", method = RequestMethod.GET)
+	public @ResponseBody FileModelContainer fetchFiles() {
+		return DBCon.getAllFiles();
 	}
 
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public ResponseEntity<FileSystemResource> downloadFile(@RequestParam("name") String name) {
+	public ResponseEntity<FileSystemResource> downloadFile(@RequestParam("fn") String fn, @RequestParam("ts") String ts) {
+		System.out.println(fn);
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType(MimeHandling.GetMimeType(name)));
-		headers.add("content-disposition", "attachment; filename=" + name);
-		String location = DBCon.getFileLocation(name);
+		System.out.println(ts);
+		headers.setContentType(MediaType.parseMediaType(MimeHandling.GetMimeType(fn)));
+		headers.add("content-disposition", "attachment; filename=" + fn);
+		String[] arr = ts.split("_");
+		String normalizedTS = arr[0] + " " + arr[1];
+		System.out.println(normalizedTS);
+		String location = DBCon.getFileLocation(fn, normalizedTS);
 		File file = FileUtils.getFile(location);
 
 		FileSystemResource fileSystemResource = new FileSystemResource(file);

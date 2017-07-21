@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.springframework.web.multipart.MultipartFile;
+
+import de.vv.web.AjaxDemoApplication;
+import de.vv.web.model.FileUploadInformation;
 
 public class FileHandling {
 
@@ -24,21 +26,30 @@ public class FileHandling {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public static void storeFile(MultipartFile uploadfile, String name, File dir)
-			throws IOException, FileNotFoundException {
+	public static String storeFile(FileUploadInformation uploadFile, String subfolder) {
+		File dir = new File(AjaxDemoApplication.config.fileLocation);
 		if (!dir.exists())
 			dir.mkdirs();
-		File serverFile = new File(dir.getAbsolutePath() + File.separator + name);
+		File serverFile = new File(dir.getAbsolutePath() + File.separator + subfolder + File.separator + uploadFile.name);
+		if(!serverFile.getParentFile().exists()) serverFile.getParentFile().mkdirs();
 		byte[] buffer = new byte[1024];
-		InputStream reader = new BufferedInputStream(uploadfile.getInputStream());
-		OutputStream writer = new FileOutputStream(serverFile);
+		InputStream reader;
+		try {
+			reader = new BufferedInputStream(uploadFile.uploadfile.getInputStream());
+			OutputStream writer = new FileOutputStream(serverFile);
 
-		int read;
-		while ((read = reader.read(buffer)) > 0) {
-			writer.write(buffer, 0, read);
+			int read;
+			while ((read = reader.read(buffer)) > 0) {
+				writer.write(buffer, 0, read);
+			}
+			reader.close();
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
-		reader.close();
-		writer.close();
+		return serverFile.getAbsolutePath();
 	}
 
 }
