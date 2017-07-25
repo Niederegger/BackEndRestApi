@@ -23,7 +23,7 @@ public class WpController {
 		if (isin.length() == 12) { // check ob die isin wirklich 12 characters lang ist
 			List<MasterValue> lmv = DBCon.getIsinData(isin); // fetche die Daten aus der Db
 			return lmv; // return eine Lister der Daten als Json Object
-		} // falls die isin niccht 12 Characters hat wird null returned
+		} // falls die isin nicht 12 Characters hat wird null returned
 		return null;
 	}
 

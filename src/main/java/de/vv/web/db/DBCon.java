@@ -11,13 +11,17 @@ import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
 import de.vv.web.AjaxDemoApplication;
 import de.vv.web.model.*;
+import de.vv.web.model.files.FileData;
+import de.vv.web.model.files.FileModelContainer;
+import de.vv.web.model.user.UserModel;
+import de.vv.web.model.user.UserRoleModel;
 
 public class DBCon {
 
-	// ---------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------------
 	// DB Connection
-	// ---------------------------------------------------------------------------------
-
+	//--------------------------------------------------------------------------------------------------------------------
+	
 	static Connection con;
 
 	/**
@@ -52,9 +56,9 @@ public class DBCon {
 		}
 	}
 
-	// ---------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------------
 	// Account
-	// ---------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------------
 
 	public static UserModel registerUser(RegistrationModel user, String authority) {
 		String queryString = "insert into vv_user (u_username, u_password, u_email) values (?,?,?);";
@@ -142,21 +146,24 @@ public class DBCon {
 		return true;
 	}
 
-	// ---------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------------
 	// File Server
-	// ---------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------------
 
 	public static int fileUploadEntry(FileData s) {
-		String queryString = "INSERT INTO dbo.vv_fileserver (fs_filename, fs_location, fs_fk_user, fs_establishment, fs_ip, fs_comment) VALUES (?, ?, ?, ?, ?, ?);";
+		String queryString = "INSERT INTO dbo.vv_fileserver (fs_filename, fs_location, fs_fk_user, fs_isin, fs_ip, fs_comment, fs_data_origin, fs_data_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		try {
 			PreparedStatement ps = con.prepareStatement(queryString);
 			int count = 1;
 			ps.setString(count++, s.filename);
 			ps.setString(count++, s.location);
 			ps.setInt(count++, s.userId);
-			ps.setString(count++, s.establishment);
+			ps.setString(count++, s.isin);
 			ps.setString(count++, s.ip);
 			ps.setString(count++, s.comment);
+			ps.setString(count++, s.dataOrigin);
+			ps.setString(count++, s.dataType);
+			
 			
 			ps.execute();
 			return 1;
@@ -165,6 +172,20 @@ public class DBCon {
 		}
 		return -1;
 	}
+	
+	public static boolean removeFileEntry(String location) {
+		String queryString = "delete from vv_fileserver where fs_location=?;";
+		try {
+			PreparedStatement ps = con.prepareStatement(queryString);
+			ps.setString(1, location);
+			ps.execute();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 
 	/**
 	 * supposed to fetch all files from fileserver which are like name
@@ -172,10 +193,12 @@ public class DBCon {
 	 * @param isin
 	 * @return
 	 */
-	public static FileModelContainer getAllFiles() {
+	public static FileModelContainer getFiles(String isin) {
+		String query = "select * from vv_fileserver where fs_isin=?;";
 		try {
 			FileModelContainer fm = new FileModelContainer();
-			PreparedStatement ps = con.prepareStatement(fm.queryString);
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, isin);
 			ResultSet rs = ps.executeQuery();
 			fm.fill(rs);
 			return fm;
@@ -207,9 +230,9 @@ public class DBCon {
 		return null;
 	}
 
-	// ---------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------------
 	// MasterValues
-	// ---------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------------
 
 
 	public static void uplaodData(UploadContainer data){

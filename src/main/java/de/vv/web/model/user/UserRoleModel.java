@@ -1,4 +1,4 @@
-package de.vv.web.model;
+package de.vv.web.model.user;
 
 public class UserRoleModel {
 	public int id;

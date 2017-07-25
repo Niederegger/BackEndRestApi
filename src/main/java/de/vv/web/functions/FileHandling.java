@@ -7,10 +7,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import de.vv.web.AjaxDemoApplication;
-import de.vv.web.model.FileUploadInformation;
+import de.vv.web.model.files.FileUploadInformation;
 
 public class FileHandling {
 
@@ -18,11 +19,11 @@ public class FileHandling {
 	 * stores file to disk
 	 * 
 	 * @param uploadfile
-	 *            - uploaded file
+	 *          - uploaded file
 	 * @param name
-	 *            - filename
+	 *          - filename
 	 * @param dir
-	 *            - directory for saving
+	 *          - directory for saving
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
@@ -30,8 +31,11 @@ public class FileHandling {
 		File dir = new File(AjaxDemoApplication.config.fileLocation);
 		if (!dir.exists())
 			dir.mkdirs();
-		File serverFile = new File(dir.getAbsolutePath() + File.separator + subfolder + File.separator + uploadFile.name);
-		if(!serverFile.getParentFile().exists()) serverFile.getParentFile().mkdirs();
+		String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+		File serverFile = new File(
+				dir.getAbsolutePath() + File.separator + subfolder + File.separator + timeStamp + uploadFile.name);
+		if (!serverFile.getParentFile().exists())
+			serverFile.getParentFile().mkdirs();
 		byte[] buffer = new byte[1024];
 		InputStream reader;
 		try {
@@ -50,6 +54,15 @@ public class FileHandling {
 			return null;
 		}
 		return serverFile.getAbsolutePath();
+	}
+
+	public static boolean deleteFile(String path) {
+		try {
+			return new File(path).delete();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

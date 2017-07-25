@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import de.vv.web.db.DBCon;
 import de.vv.web.functions.BasicFunctions;
 import de.vv.web.model.RegistrationModel;
-import de.vv.web.model.UserModel;
+import de.vv.web.model.user.UserModel;
 
 @RestController
 @RequestMapping("/api/account")
