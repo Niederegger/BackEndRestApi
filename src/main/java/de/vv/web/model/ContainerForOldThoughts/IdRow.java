@@ -1,4 +1,4 @@
-package de.vv.web.model;
+package de.vv.web.model.ContainerForOldThoughts;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6,8 +6,6 @@ import java.sql.SQLException;
 /**
  * IsinDataRow
  * 
- * @author Alexey Gasevic
- *
  */
 public class IdRow {
 	public String mv_fieldname;

@@ -2,6 +2,7 @@ package de.vv.web.model;
 
 import de.vv.web.functions.BasicFunctions;
 
+// used for registration
 public class RegistrationModel {
 	public String username;
 	public String email;

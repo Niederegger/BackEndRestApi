@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import de.vv.web.db.DBCon;
+import de.vv.web.db.DBC_FileSystem;
 import de.vv.web.functions.*;
 import de.vv.web.model.Strings2;
 import de.vv.web.model.files.FileModelContainer;
@@ -30,9 +29,20 @@ import de.vv.web.model.files.FileUploadInformation;
 public class FileController {
 
 	/**
-	 * Controller handling file uploads
+	 * Controller to Upload Files to this Server
 	 * 
-	 * @param uploadfile
+	 * @param request
+	 *          Used to fetch Ip
+	 * @param isin
+	 *          ISIN belonging to this request
+	 * @param dataType
+	 *          ("Typ")
+	 * @param dataOrigin
+	 *          ("Quelle")
+	 * @param comment
+	 *          ("Kommentar")
+	 * @param file
+	 *          ("Die Datei an sich")
 	 * @return
 	 */
 	@RequestMapping(value = "/uploadFile", headers = "content-type=multipart/*", method = RequestMethod.POST)
@@ -40,23 +50,19 @@ public class FileController {
 			@RequestParam(value = "dataType") String dataType, @RequestParam(value = "dataOrigin") String dataOrigin,
 			@RequestParam(value = "comment") String comment, @RequestParam(value = "file") MultipartFile file) {
 
-		FileUploadInformation fui = new FileUploadInformation();
-		fui.comment = comment.trim();
-		fui.isin = isin.trim();
-		fui.dataOrigin = dataOrigin.trim();
-		fui.dataType = dataType.trim();
-		fui.uploadfile = file;
-		System.out.println(fui.toString());
+		FileUploadInformation fui = new FileUploadInformation(isin, dataOrigin, dataType, comment, file);
 		if (fui.valid()) {
-			try { // directory des fileservers
+			try {
 
 				// store file
 				String location = FileHandling.storeFile(fui, fui.isin);
 				if (location == null)
 					return "Error when saving File.";
+
 				// create entry to db
-				DBCon.fileUploadEntry(fui.toFileData(request.getRemoteAddr(), location, -1)); // eintrag in die db
+				DBC_FileSystem.fileUploadEntry(fui.toFileData(request.getRemoteAddr(), location, -1)); // eintrag in die db
 				return "Successfully uploaded file => " + fui.name;
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				return "Failed to upload => " + e.getMessage();
@@ -66,21 +72,34 @@ public class FileController {
 		}
 	}
 
+	/**
+	 * fetches all saved Informations of Files belonging to this ISIN
+	 * 
+	 * @param isin
+	 *          ISIN
+	 * @return FileModelContainer
+	 */
 	@RequestMapping(value = "/fetchFileData", method = RequestMethod.GET)
 	public @ResponseBody FileModelContainer fetchFiles(@RequestParam("isin") String isin) {
-		return DBCon.getFiles(isin);
+		return DBC_FileSystem.getFiles(BasicFunctions.isinOfWkn(isin));
 	}
 
+	/**
+	 * File Download Controller
+	 * 
+	 * @param fn
+	 *          FileName
+	 * @param ts
+	 *          TimeStamp
+	 * @return DownloadEvent
+	 */
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
 	public ResponseEntity<FileSystemResource> downloadFile(@RequestParam("fn") String fn, @RequestParam("ts") String ts) {
-		System.out.println(fn);
 		HttpHeaders headers = new HttpHeaders();
-		System.out.println(ts);
 		headers.setContentType(MediaType.parseMediaType(MimeHandling.GetMimeType(fn)));
 		headers.add("content-disposition", "attachment; filename=" + fn);
 		String normalizedTS = normalizeTimeStamp(ts);
-		System.out.println(normalizedTS);
-		String location = DBCon.getFileLocation(fn, normalizedTS);
+		String location = DBC_FileSystem.getFileLocation(fn, normalizedTS);
 		File file = FileUtils.getFile(location);
 
 		FileSystemResource fileSystemResource = new FileSystemResource(file);
@@ -88,33 +107,42 @@ public class FileController {
 		return new ResponseEntity<>(fileSystemResource, headers, HttpStatus.OK);
 	}
 
+	/**
+	 * Delete File Controller: deleting File from server and from Database
+	 * 
+	 * @param val
+	 *          carries Timestamp and Filename
+	 * @return Result-Message
+	 */
 	@RequestMapping(value = "/remove", method = RequestMethod.POST)
 	public String removeFile(@RequestBody Strings2 val) {
-		System.out.println(val.toString());
 		if (val.str2 == null || val.str2 == "") {
-			System.out.println("Error, wrong input");
 			return "Error, wrong input";
 		}
-		String location = DBCon.getFileLocation(val.str1, normalizeTimeStamp(val.str2));
+		String location = DBC_FileSystem.getFileLocation(val.str1, normalizeTimeStamp(val.str2));
 		if (location != null) {
-			if (FileHandling.deleteFile(location)) {
-				if (DBCon.removeFileEntry(location)) {
-					System.out.println("Alles gut!");
+			if (FileHandling.deleteFile(location)) {		// deleting data from File-Server
+				if (DBC_FileSystem.removeFileEntry(location)) {		// deleting Entry from DB
 					return "Delete success.";
 				} else {
-					System.out.println("Couldn't remove Entry.");
 					return "Couldn't remove Entry.";
 				}
 			} else {
-				System.out.println("Couldn't remove File.");
 				return "Couldn't remove File.";
 			}
 		} else {
-			System.out.println("Already deleted.");
 			return "Already deleted.";
 		}
 	}
 
+	/**
+	 * Since a special form of TimeStamp is used (replaces whitespace with '_')
+	 * this TimeStamp has to be parsed back to normal to be usefull again
+	 * 
+	 * @param ts
+	 *          TimeStamp
+	 * @return normalized TimeStamp
+	 */
 	String normalizeTimeStamp(String ts) {
 		String[] arr = ts.split("_");
 		return arr[0] + " " + arr[1];

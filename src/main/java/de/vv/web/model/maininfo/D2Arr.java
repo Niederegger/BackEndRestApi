@@ -1,4 +1,4 @@
-package de.vv.web.model;
+package de.vv.web.model.maininfo;
 
 /**
  * simple container for 2 String Mapping more of a hack then aestethics

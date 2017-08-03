@@ -2,6 +2,10 @@ package de.vv.web.functions;
 
 import java.util.HashMap;
 
+/**
+ * This class was created to simply extend basic MimeHandling,
+ * this way it's possible to check which file-ending is what kind of file etc
+ */
 public class MimeHandling {
 
 	private static HashMap<String, String> _mappings = new HashMap<String, String>();
@@ -578,8 +582,8 @@ public class MimeHandling {
 
 		if (!e.startsWith("\\.")) {
 			String[] earr = e.split("\\.");
-			e = earr[earr.length-1];
-//			extension = "." + extension;
+			e = earr[earr.length - 1];
+			//			extension = "." + extension;
 		}
 
 		return _mappings.getOrDefault(e, "application/octet-stream");

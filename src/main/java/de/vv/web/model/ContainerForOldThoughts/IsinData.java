@@ -1,4 +1,4 @@
-package de.vv.web.model;
+package de.vv.web.model.ContainerForOldThoughts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ public class IsinData {
 
 	public static final String query = "select distinct(MV_FIELDNAME), MV_STRINGVALUE, MV_AS_OF_DATE, MV_TIMESTAMP, "
 			+ "MV_SOURCE_ID from vv_mastervalues where mv_isin=? order by MV_AS_OF_DATE desc, MV_TIMESTAMP desc;";
+	
 
 	// this map is used to handle the multiple fieldnames
 	// some may contain multiple entrys, like closing price

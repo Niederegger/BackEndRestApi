@@ -1,8 +1,10 @@
-package de.vv.web.model;
+package de.vv.web.model.maininfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import de.vv.web.model.ContainerForOldThoughts.UploadContainer;
 
 //serves as a container for returned values from vvsp_get_maininfo
 public class MainInfoContainer {

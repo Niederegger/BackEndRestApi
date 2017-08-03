@@ -1,4 +1,4 @@
-package de.vv.web.model;
+package de.vv.web.model.maininfo;
 
 import java.util.ArrayList;
 import java.util.List;

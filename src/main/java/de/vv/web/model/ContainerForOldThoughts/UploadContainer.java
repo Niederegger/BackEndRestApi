@@ -1,12 +1,12 @@
-package de.vv.web.model;
+package de.vv.web.model.ContainerForOldThoughts;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UploadContainer {
 	public String query = "INSERT INTO vv_mastervalues_upload"
-			+ "(MVU_DATA_ORIGIN, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
-			+ "(?,?,?,?,?,?,?);";
+			+ "(MVU_DATA_ORIGIN, MVU_URLSOURCE, MVU_SOURCEFILE, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
+			+ "(?,?,?,?,?,?,?,?,?);";
 
 	public String isin;
 	public String mic;

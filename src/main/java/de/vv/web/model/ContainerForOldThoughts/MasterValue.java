@@ -1,4 +1,4 @@
-package de.vv.web.model;
+package de.vv.web.model.ContainerForOldThoughts;
 
 /**
  * Model Class of MasterValues

@@ -1,26 +1,22 @@
-package de.vv.web.functions;
+package de.vv.web.security;
 
 import java.sql.Timestamp;
 
 import de.vv.web.config.GlobalScope;
 
-public class Scheduler implements Runnable {
-
+public class TokenScheduler implements Runnable {
+	
 	public void run() {
-		while (GlobalScope.running) {			 // while active			
-
-			// print TS when patching
+		while(GlobalScope.running){
 			System.out.println("Schedule event triggered: " + (new Timestamp(System.currentTimeMillis())));
-
-			// this is the important part:
-			GlobalScope.fetchIsins();		// reFetching ISIN
-
+			GlobalScope.fetchIsins();
 			try {
 				Thread.sleep(GlobalScope.scheduleSleepTime);
 			} catch (InterruptedException e) {
-				System.err.println("SchulderError: " + e.getMessage());
+				System.err.println("SchulderError: "+e.getMessage());
 				e.printStackTrace();
 			}
 		}
 	}
+	
 }

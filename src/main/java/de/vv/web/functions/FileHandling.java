@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import de.vv.web.AjaxDemoApplication;
+import de.vv.web.App;
 import de.vv.web.model.files.FileUploadInformation;
 
 public class FileHandling {
@@ -18,7 +18,7 @@ public class FileHandling {
 	/**
 	 * stores file to disk
 	 * 
-	 * @param uploadfile
+	 * @param uploadFile
 	 *          - uploaded file
 	 * @param name
 	 *          - filename
@@ -28,18 +28,23 @@ public class FileHandling {
 	 * @throws FileNotFoundException
 	 */
 	public static String storeFile(FileUploadInformation uploadFile, String subfolder) {
-		File dir = new File(AjaxDemoApplication.config.fileLocation);
-		if (!dir.exists())
-			dir.mkdirs();
-		String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-		File serverFile = new File(
-				dir.getAbsolutePath() + File.separator + subfolder + File.separator + timeStamp + uploadFile.name);
-		if (!serverFile.getParentFile().exists())
-			serverFile.getParentFile().mkdirs();
+		// initial Setup
+		
+		File dir = new File(App.config.fileLocation);																																				// getting FileServerLocation
+		if (!dir.exists())																																																	// checks whether this directory exists
+			dir.mkdirs();																																																			// if not create it
+		String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());																				// gets current TimeStamp
+		File serverFile = new File(																																													// build fullPath + name of this File
+				dir.getAbsolutePath() + File.separator + subfolder + File.separator + timeStamp + uploadFile.name);	
+		if (!serverFile.getParentFile().exists())																																						// check if path exists
+			serverFile.getParentFile().mkdirs();																																							// create if doesn't
+		
+		// start writing
+		
 		byte[] buffer = new byte[1024];
 		InputStream reader;
 		try {
-			reader = new BufferedInputStream(uploadFile.uploadfile.getInputStream());
+			reader = new BufferedInputStream(uploadFile.uploadFile.getInputStream());
 			OutputStream writer = new FileOutputStream(serverFile);
 
 			int read;
@@ -56,6 +61,13 @@ public class FileHandling {
 		return serverFile.getAbsolutePath();
 	}
 
+	/**
+	 * deletes File from FileServer
+	 * 
+	 * @param path
+	 *          kopmlete path to File
+	 * @return
+	 */
 	public static boolean deleteFile(String path) {
 		try {
 			return new File(path).delete();

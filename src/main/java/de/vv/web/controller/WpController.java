@@ -11,96 +11,204 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.vv.web.config.GlobalScope;
-import de.vv.web.db.DBCon;
+import de.vv.web.db.DBC_WP;
+import de.vv.web.functions.BasicFunctions;
 import de.vv.web.model.*;
+import de.vv.web.model.ContainerForOldThoughts.IsinData;
+import de.vv.web.model.ContainerForOldThoughts.MasterValue;
+import de.vv.web.model.ContainerForOldThoughts.UploadContainer;
+import de.vv.web.model.ContainerForOldThoughts.WPDModel;
+import de.vv.web.model.UpdateIsinHistory.HistoryIsinUpdatesContainer;
+import de.vv.web.model.maininfo.*;
 
 @RestController
 @RequestMapping("/api/wp")
 public class WpController {
 
-	@RequestMapping("/isin2")
-	public List<MasterValue> isin(@RequestParam(value = "isin", required = true) String isin) {
-		if (isin.length() == 12) { // check ob die isin wirklich 12 characters lang ist
-			List<MasterValue> lmv = DBCon.getIsinData(isin); // fetche die Daten aus der Db
-			return lmv; // return eine Lister der Daten als Json Object
+	//--------------------------------------------------------------------------------------------------------------------
+	// In Betrieb
+	//--------------------------------------------------------------------------------------------------------------------
+
+	/**
+	 * isinAC - ISINs AutoComplete This Interface is used to offer an
+	 * autocomplete function when looking for ISINs,
+	 * based on contains
+	 * 
+	 * @param v
+	 *          ISIN
+	 * @param amt
+	 *          Amount
+	 * @return a List of similar ISINs
+	 */
+	@RequestMapping("/isinAC")
+	public List<String> isinAC(@RequestParam(value = "v", required = true) String v,
+			@RequestParam(value = "amt", required = true) int amt) {
+		if (amt < 0)
+			return null;
+		return GlobalScope.getLikeIsin(v.toLowerCase(), amt);
+	}
+
+	/**
+	 * fetches most recent Information of this ISIN with all mentioned Sources
+	 * 
+	 * @param v
+	 *          ISIN
+	 * @return QuellenMap
+	 */
+	@RequestMapping("/quellen")
+	public QuellenMap getQuellen(@RequestParam(value = "v") String v) {
+		v = BasicFunctions.isinOfWkn(v);
+		if (v != null) {
+			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).toQuellenContainer();
+		}
+		return null;
+	}
+
+	/**
+	 * @param v
+	 *          ISINs
+	 * @param s
+	 *          SequenceNum
+	 * @return MainInfo2[]
+	 */
+	@RequestMapping("/quellenAnsehen")
+	public MainInfo2[] getQuellenAnsehen(@RequestParam(value = "v") String v, @RequestParam(value = "s") int s) {
+		v = BasicFunctions.isinOfWkn(v);
+		if (v != null) {
+			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).getSameSqn(s);
+		}
+		return null;
+	}
+
+	/**
+	 * returns a single QuellEntry
+	 * 
+	 * @param v
+	 *          ISIN
+	 * @param sqn
+	 *          SequenceNum
+	 * @param srcn
+	 *          SrcNum
+	 * @return QuellEntry
+	 */
+	@RequestMapping("/quellEntry")
+	public QuellElement getQuellenElement(@RequestParam(value = "v") String v, @RequestParam(value = "sqn") int sqn,
+			@RequestParam(value = "srcn") int srcn) {
+		v = BasicFunctions.isinOfWkn(v);
+		if (v != null) {
+			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).toQuellElement(sqn, srcn);
+		}
+		return null;
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------
+	// Funktionen
+	//--------------------------------------------------------------------------------------------------------------------
+
+	void printRequestInfo(HttpServletRequest r) {
+		System.out.println("rUser: " + r.getRemoteUser());
+		System.out.println("rAddr: " + r.getRemoteAddr());
+		System.out.println("rHost: " + r.getRemoteHost());
+		System.out.println("XForward: " + r.getHeader("X-Forwarded-For"));
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------
+	// ab hier spare ich mir das Kommentieren, da diese Funktionen wieder rausgenommen wurden aus der WebSite
+	// zum teil Funktionieren diese trotzdem, und sich immernoch offen in der RestApi
+	//--------------------------------------------------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------------------------------------------------
+	// funktioniert, nicht In Betrieb
+	//--------------------------------------------------------------------------------------------------------------------
+
+	@RequestMapping("/Stammdaten")
+	public MainInfoContainer getStammdaten(@RequestParam(value = "v") String v) {
+		v = BasicFunctions.isinOfWkn(v);
+		if (v != null) {
+			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).getStammdaten();
+		}
+		return null;
+	}
+
+	@RequestMapping("isin")
+	public IsinData isinData(@RequestParam(value = "v", required = true) String v) {
+		v = BasicFunctions.isinOfWkn(v);
+		if (v != null) { // check ob die isin wirklich 12 characters lang ist
+			System.out.println("called for isin: " + v);
+			return DBC_WP.getIsinInfo(v); // return eine Lister der Daten als Json Object
 		} // falls die isin nicht 12 Characters hat wird null returned
 		return null;
 	}
 
-	@RequestMapping("/hi")
-	public String hi() {
-		return "hi";
-	}
-	
-	@RequestMapping("isin")
-	public IsinData isinData(@RequestParam(value = "v", required = true) String v){
-		if (v.length() <= 12) { // check ob die isin wirklich 12 characters lang ist
-			System.out.println("called for isin: "+v);
-			return DBCon.getIsinInfo(v); // return eine Lister der Daten als Json Object
-		} // falls die isin nicht 12 Characters hat wird null returned
-		return null;
-	}
-	
 	@RequestMapping("isinExist")
-	public boolean isinExist(@RequestParam(value = "v", required = true) String v){
+	public boolean isinExist(@RequestParam(value = "v", required = true) String v) {
 		if (v.length() <= 12) { // check ob die isin wirklich 12 characters lang ist
-			System.out.println("isinExist called: "+v);
-			return DBCon.doesIsinExist(v); // return eine Lister der Daten als Json Object
+			System.out.println("isinExist called: " + v);
+			return DBC_WP.doesIsinExist(v); // return eine Lister der Daten als Json Object
 		} // falls die isin niccht 12 Characters hat wird null returned
 		return false;
 	}
-	
+
 	@RequestMapping("info")
-	public MainInfoContainer mainInfo(@RequestParam(value = "v", required = true) String v){
-		if (v.length() == 12 || v.length() == 6) { // check ob die isin wirklich 12 characters lang ist
-			System.out.println("MainInfo called: "+v);
-			return DBCon.getMainInfo(v); // return eine Lister der Daten als Json Object
+	public MainInfoContainer mainInfo(@RequestParam(value = "v", required = true) String v) {
+		v = BasicFunctions.isinOfWkn(v);
+		if (v != null) { // check ob die isin wirklich 12 characters lang ist
+			System.out.println("MainInfo called: " + v);
+			return DBC_WP.getMainInfo(v); // return eine Lister der Daten als Json Object
 		} // falls die isin niccht 12 Characters hat wird null returned
 		return null;
 	}
-	
+
 	@RequestMapping(value = "editInfo", method = { RequestMethod.POST })
-	public MainInfoContainer editMainInfo(HttpServletRequest request, @RequestBody MainInfoContainer info){
+	public MainInfoContainer editMainInfo(HttpServletRequest request, @RequestBody MainInfoContainer info) {
 		printRequestInfo(request);
-		if(request != null){
+		if (request != null) {
 			UploadContainer uc = info.toUploadContainer();
-			String source = request.getHeader("X-Forwarded-For") !=null ? 
-					request.getHeader("X-Forwarded-For") : request.getRemoteAddr();
-			uc.setData("AnonUser", source, "changed by User", ""); // source, origin, comment, mic) 
-			DBCon.uplaodData(uc);
+			String source = request.getHeader("X-Forwarded-For") != null ? request.getHeader("X-Forwarded-For")
+					: request.getRemoteAddr();
+			uc.setData("User", "User", source, "changed by User", ""); // source, origin, comment, mic) 
+			DBC_WP.uplaodData(uc);
 			System.out.println("Data inserted by: " + source);
 			return info;
-		} else System.out.println();
+		} else
+			System.out.println();
 		return null;
 	}
-	
-	void printRequestInfo(HttpServletRequest r){
-		System.out.println("rUser: " + r.getRemoteUser());
-		System.out.println("rAddr: " + r.getRemoteAddr());
-		System.out.println("rHost: " + r.getRemoteHost());
-		System.out.println("XForward: " +  r.getHeader("X-Forwarded-For"));
+
+	@RequestMapping("/distinctSources")
+	public HistoryIsinUpdatesContainer distinctSources(@RequestParam(value = "v") String v) {
+		v = BasicFunctions.isinOfWkn(v);
+		if (v != null) {
+			return DBC_WP.getSources(BasicFunctions.isinOfWkn(v));
+		}
+		return null;
 	}
-	
+
+	//--------------------------------------------------------------------------------------------------------------------
+	// veraltet
+	//--------------------------------------------------------------------------------------------------------------------
+
 	@RequestMapping("/wpd")
 	public List<WPDModel> wpd(@RequestParam(value = "isin", required = true) String isin) {
-		if (isin.length() <= 12) { // check ob die isin wirklich 12 characters lang ist
-			List<WPDModel> list = DBCon.getWpd(isin); // fetche die Daten aus der Db
+		isin = BasicFunctions.isinOfWkn(isin);
+		if (isin != null) { // check ob die isin wirklich 12 characters lang ist
+			List<WPDModel> list = DBC_WP.getWpd(isin); // fetche die Daten aus der Db
 			return list; // return eine Lister der Daten als Json Object
 		} // falls die isin niccht 12 Characters hat wird null returned
 		return null;
 	}
-	
-	/**
-	 * isinAC - Isin AutoComplete This Interface is used to offer an
-	 * autocomplete function when looking for isin,
-	 * based on contains
-	 * @param in
-	 * @return
-	 */
-	@RequestMapping("/isinAC")
-	public List<String> isinAC(@RequestParam(value = "v", required = true) String v, @RequestParam(value = "amt", required = true) int amt) {
-		if(amt<0) return null;
-		return GlobalScope.getLikeIsin(v.toLowerCase(), amt);
+
+	//--------------------------------------------------------------------------------------------------------------------
+	// funktioniert nicht
+	//--------------------------------------------------------------------------------------------------------------------
+
+	@RequestMapping("/isin2")
+	public List<MasterValue> isin(@RequestParam(value = "isin", required = true) String isin) {
+		if (isin.length() == 12) { // check ob die isin wirklich 12 characters lang ist
+			List<MasterValue> lmv = DBC_WP.getIsinData(isin); // fetche die Daten aus der Db
+			return lmv; // return eine Lister der Daten als Json Object
+		} // falls die isin nicht 12 Characters hat wird null returned
+		return null;
 	}
 
 }
