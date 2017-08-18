@@ -47,18 +47,18 @@ public class FileController {
 	 */
 	@RequestMapping(value = "/uploadFile", headers = "content-type=multipart/*", method = RequestMethod.POST)
 	public @ResponseBody String uploadFileHandler(HttpServletRequest request, @RequestParam(value = "isin") String isin,
-			@RequestParam(value = "dataType") String dataType, @RequestParam(value = "dataOrigin") String dataOrigin,
-			@RequestParam(value = "comment") String comment, @RequestParam(value = "file") MultipartFile file) {
+			@RequestParam(value = "dataOrigin") String dataOrigin,@RequestParam(value = "file") MultipartFile file) {
 
-		FileUploadInformation fui = new FileUploadInformation(isin, dataOrigin, dataType, comment, file);
+		FileUploadInformation fui = new FileUploadInformation(isin, dataOrigin, file);
 		if (fui.valid()) {
 			try {
 
+				System.out.println("1:" + fui.name);
 				// store file
 				String location = FileHandling.storeFile(fui, fui.isin);
 				if (location == null)
 					return "Error when saving File.";
-
+				
 				// create entry to db
 				DBC_FileSystem.fileUploadEntry(fui.toFileData(request.getRemoteAddr(), location, -1)); // eintrag in die db
 				return "Successfully uploaded file => " + fui.name;
@@ -95,13 +95,14 @@ public class FileController {
 	 */
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
 	public ResponseEntity<FileSystemResource> downloadFile(@RequestParam("fn") String fn, @RequestParam("ts") String ts) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType(MimeHandling.GetMimeType(fn)));
-		headers.add("content-disposition", "attachment; filename=" + fn);
 		String normalizedTS = normalizeTimeStamp(ts);
 		String location = DBC_FileSystem.getFileLocation(fn, normalizedTS);
 		File file = FileUtils.getFile(location);
 
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType(MimeHandling.GetMimeType(fn)));
+		headers.add("content-disposition", "attachment; filename=" + fn);
+		
 		FileSystemResource fileSystemResource = new FileSystemResource(file);
 
 		return new ResponseEntity<>(fileSystemResource, headers, HttpStatus.OK);

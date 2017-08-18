@@ -36,6 +36,7 @@ public class App {
 		
 		if(BasicFunctions.loadConfig(args[0])){										// Ja - Continue
 			DBCon.openConnection();																	// Verbindung mit Datenbank erstellen
+//			DBCon.initCallableStatements();
 			MimeHandling.initMappings();														// sets up various different Mimes for possible Files (file-Endings)
 			Thread scheduleThread = new Thread(new Scheduler());		// starts Scheduler Thread (fetches regularly all distinct ISIN for Autocomplete)
 			scheduleThread.start();	

@@ -34,6 +34,7 @@ public class FileHandling {
 		if (!dir.exists())																																																	// checks whether this directory exists
 			dir.mkdirs();																																																			// if not create it
 		String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());																				// gets current TimeStamp
+		System.out.println("2"+uploadFile.name);
 		File serverFile = new File(																																													// build fullPath + name of this File
 				dir.getAbsolutePath() + File.separator + subfolder + File.separator + timeStamp + uploadFile.name);	
 		if (!serverFile.getParentFile().exists())																																						// check if path exists

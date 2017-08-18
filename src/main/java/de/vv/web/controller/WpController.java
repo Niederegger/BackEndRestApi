@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 import de.vv.web.config.GlobalScope;
 import de.vv.web.db.DBC_WP;
 import de.vv.web.functions.BasicFunctions;
-import de.vv.web.model.*;
+import de.vv.web.model.FieldModel;
+import de.vv.web.model.Strings2;
 import de.vv.web.model.ContainerForOldThoughts.IsinData;
 import de.vv.web.model.ContainerForOldThoughts.MasterValue;
 import de.vv.web.model.ContainerForOldThoughts.UploadContainer;
 import de.vv.web.model.ContainerForOldThoughts.WPDModel;
 import de.vv.web.model.UpdateIsinHistory.HistoryIsinUpdatesContainer;
 import de.vv.web.model.maininfo.*;
+import de.vv.web.model.stammdaten.QuellenSet;
 
 @RestController
 @RequestMapping("/api/wp")
@@ -29,6 +31,11 @@ public class WpController {
 	// In Betrieb
 	//--------------------------------------------------------------------------------------------------------------------
 
+	@RequestMapping("/isinOfWkn")
+	public String isinAC(@RequestParam(value = "v", required = true) String v) {
+		return BasicFunctions.isinOfWkn(v);
+	}
+	
 	/**
 	 * isinAC - ISINs AutoComplete This Interface is used to offer an
 	 * autocomplete function when looking for ISINs,
@@ -63,7 +70,44 @@ public class WpController {
 		}
 		return null;
 	}
+	
+	/**
+	 * fetches most recent Information of this ISIN with all mentioned Sources
+	 * 
+	 * @param v
+	 *          ISIN
+	 * @return QuellenMap
+	 */
+	@RequestMapping("/quellenSet")
+	public QuellenSet getQuellenSet(@RequestParam(value = "v") String v) {
+		v = BasicFunctions.isinOfWkn(v);
+		if (v != null) {
+			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).toQuellenSet();
+		}
+		return null;
+	}
 
+
+	@RequestMapping(value = "pushData", method = { RequestMethod.POST })
+	public String pushData(HttpServletRequest request, @RequestBody FieldModel info) {
+		printRequestInfo(request);
+		if (request != null) {
+			String ip = request.getHeader("X-Forwarded-For") != null ? request.getHeader("X-Forwarded-For")
+					: request.getRemoteAddr();
+			if(info != null){
+
+				String isin = info.getIsin().trim();
+				if(isin != null  && isin.length() == 12){
+//					public static int patchData(FieldModel fm, String isin, String ip, String mic, String comment, String srcID, String origin) {
+					int i = DBC_WP.patchData(info, isin, ip, null, "changed by User", "User", "unregistered User");
+					if(i >= 0) return "success";
+				}
+			}
+			return "error";
+		} else
+			return "Are you a Hacker?";
+	}
+	
 	/**
 	 * @param v
 	 *          ISINs
@@ -72,10 +116,10 @@ public class WpController {
 	 * @return MainInfo2[]
 	 */
 	@RequestMapping("/quellenAnsehen")
-	public MainInfo2[] getQuellenAnsehen(@RequestParam(value = "v") String v, @RequestParam(value = "s") int s) {
+	public List<MainInfo2> getQuellenAnsehen(@RequestParam(value = "v") String v, @RequestParam(value = "s") int s) {
 		v = BasicFunctions.isinOfWkn(v);
 		if (v != null) {
-			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).getSameSqn(s);
+			return DBC_WP.getFieldValueSours(BasicFunctions.isinOfWkn(v), s).container;
 		}
 		return null;
 	}
@@ -100,7 +144,28 @@ public class WpController {
 		}
 		return null;
 	}
+	
+	@RequestMapping("/getFields")
+	public FieldModel getQuellenElement() {
+		return DBC_WP.getFieldList(null);
+	}
 
+	@RequestMapping(value = "editInfo2", method = { RequestMethod.POST })
+	public QuellenMap editMainInfo2(HttpServletRequest request, @RequestBody QuellenMap info) {
+		printRequestInfo(request);
+		if (request != null) {
+			UploadContainer uc = info.toUploadContainer();
+			String source = request.getHeader("X-Forwarded-For") != null ? request.getHeader("X-Forwarded-For")
+					: request.getRemoteAddr();
+			uc.setData("User", "User", source, "changed by User", ""); // source, origin, comment, mic) 
+			DBC_WP.uplaodData(uc);
+			System.out.println("Data inserted by: " + source);
+			return info;
+		} else
+			System.out.println();
+		return null;
+	}
+	
 	//--------------------------------------------------------------------------------------------------------------------
 	// Funktionen
 	//--------------------------------------------------------------------------------------------------------------------

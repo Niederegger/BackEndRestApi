@@ -16,6 +16,7 @@ de\vv\web\db\DBC_FileSystem.class
 de\vv\web\model\RegistrationModel.class
 de\vv\web\model\maininfo\MainInfo2.class
 de\vv\web\model\ContainerForOldThoughts\UploadContainer.class
+de\vv\web\model\stammdaten\QuellenSequence.class
 de\vv\web\model\files\FileModel.class
 de\vv\web\model\maininfo\QuellElement.class
 de\vv\web\model\files\FileModelContainer.class
@@ -23,13 +24,16 @@ de\vv\web\model\maininfo\MainInfoContainer.class
 de\vv\web\db\DBC_WP.class
 de\vv\web\model\StringInt.class
 de\vv\web\functions\MimeHandling.class
+de\vv\web\model\stammdaten\QuellenAngabe.class
 de\vv\web\model\UpdateIsinHistory\HistoryIsinUpdatesContainer.class
+de\vv\web\model\FieldModel.class
 de\vv\web\config\GlobalScope.class
 de\vv\web\model\maininfo\MainInfo2Container.class
 de\vv\web\App.class
 de\vv\web\functions\BasicFunctions.class
 de\vv\web\config\Config.class
 de\vv\web\controller\AccountController.class
+de\vv\web\model\stammdaten\QuellenSet.class
 de\vv\web\db\DBCon.class
 de\vv\web\model\Strings2.class
 de\vv\web\model\maininfo\QuellenEntry.class

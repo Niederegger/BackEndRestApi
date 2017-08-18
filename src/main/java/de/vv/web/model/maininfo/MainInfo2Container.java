@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.vv.web.model.StringInt;
+import de.vv.web.model.stammdaten.QuellenSet;
 
 public class MainInfo2Container {
 
@@ -21,10 +22,12 @@ public class MainInfo2Container {
 	// Constructor
 	//--------------------------------------------------------------------------------------------------------------------
 
-	public MainInfo2Container() {	}
+	public MainInfo2Container() {
+	}
 
 	/**
 	 * Initializes this container with fetched ResultSet (only suited ResultSets will work, use the right query m8 ;)
+	 * 
 	 * @param rs
 	 */
 	public MainInfo2Container(ResultSet rs) {
@@ -37,13 +40,16 @@ public class MainInfo2Container {
 
 	/**
 	 * Initializes this container with fetched ResultSet (only suited ResultSets will work, use the right query m8 ;)
+	 * 
 	 * @param rs
 	 */
 	public void init(ResultSet rs) {
 		try {
 			while (rs.next()) {
 				MainInfo2 mi2 = new MainInfo2(rs);
-				container.add(mi2);
+				if (mi2.stringValue != null && !mi2.stringValue.equals("")){
+					container.add(mi2);
+				} 
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -53,6 +59,10 @@ public class MainInfo2Container {
 	//--------------------------------------------------------------------------------------------------------------------
 	//Converter to
 	//--------------------------------------------------------------------------------------------------------------------
+
+	public QuellenSet toQuellenSet() {
+		return new QuellenSet(container);
+	}
 
 	public QuellenMap toQuellenContainer() {
 		sortContainer(true);
@@ -128,9 +138,8 @@ public class MainInfo2Container {
 					if (accu.sameSeq(mi2b)) {
 						if (accu.higherPrior(mi2b))
 							accu = mi2b;
-						if (quellenNeeded) {
-							String str = mi2b.data_origin;
-							str = str.length() > 15 ? str.substring(0, 14) : str;
+						if (quellenNeeded) {					// nimmt quellenReferencen mit <- dient der DropDown kultivierung
+							String str = mi2b.sourceId;
 							StringInt si = new StringInt(str, mi2b.source_num);
 							if (!qref.contains(si)) {
 								qref.add(si);

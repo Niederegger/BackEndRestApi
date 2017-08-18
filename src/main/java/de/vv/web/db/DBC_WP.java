@@ -1,16 +1,19 @@
 package de.vv.web.db;
 
+import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.vv.web.model.FieldModel;
+import de.vv.web.model.Strings2;
 import de.vv.web.model.ContainerForOldThoughts.*;
 import de.vv.web.model.UpdateIsinHistory.HistoryIsinUpdatesContainer;
+import de.vv.web.model.maininfo.MainInfo2;
 import de.vv.web.model.maininfo.MainInfo2Container;
 import de.vv.web.model.maininfo.MainInfoContainer;
-
 
 // DataBaseConnection for WertPapiere
 public class DBC_WP {
@@ -18,6 +21,30 @@ public class DBC_WP {
 	//--------------------------------------------------------------------------------------------------------------------
 	// In Betrieb
 	//--------------------------------------------------------------------------------------------------------------------
+
+	public static MainInfo2Container getFieldValueSours(String isin, int seqn) {
+		if (isin.length() == 12) {
+			String queryString = "{call vvsp_get_fieldvalue_sources (?, ?)}";
+			try {
+				CallableStatement cstmt = DBCon.con.prepareCall(queryString);
+				cstmt.setString(1, isin);
+				cstmt.setInt(2, seqn);
+				ResultSet rs = cstmt.executeQuery();
+				int count = 0;																		// Diese Count-geschichte kommt daher:
+				while (rs == null) {															// eine StoredProcedure kann mehrere ResultSet returnen
+					count++;																				// MainInfo (v1) lieferte einige Sets zureuck, von denen
+					cstmt.getMoreResults();														// die ersten paar null waren, -> dadher die Iteration durch
+					rs = cstmt.getResultSet();													// die sets, // mainInfoV2 liefert aktuell direkt das
+					if (count++ > 100)															// gewuenschte Set und macht dadurch dieses Handling 
+						return null;																	// unnoetig
+				}
+				return new MainInfo2Container(rs);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Returns first ISIN linked with this WKN
@@ -27,10 +54,9 @@ public class DBC_WP {
 	 */
 	public static String getIsinOfWkn(String wkn) {
 		try {
-			PreparedStatement ps;
-			ps = DBCon.con.prepareStatement("select distinct mv_isin from vv_mastervalues where MV_Stringvalue=?;");
-			ps.setString(1, wkn);
-			ResultSet rs = ps.executeQuery();
+			CallableStatement cstmt = DBCon.con.prepareCall("{call vvsp_get_isin_for_wkn (?)}");
+			cstmt.setString(1, wkn);
+			ResultSet rs = cstmt.executeQuery();
 			while (rs.next()) {
 				return rs.getString("mv_isin");
 			}
@@ -48,16 +74,16 @@ public class DBC_WP {
 	 */
 	public static MainInfo2Container getStammdaten(String isin) {
 		if (isin.length() == 12) {
-			String queryString = "exec vvsp_get_maininfoV2 ?;";
+			String queryString = "{call vvsp_get_maininfoV2 (?)}";
 			try {
-				PreparedStatement ps = DBCon.con.prepareStatement(queryString);
-				ps.setString(1, isin);
-				ResultSet rs = ps.executeQuery();
+				CallableStatement cstmt = DBCon.con.prepareCall(queryString);
+				cstmt.setString(1, isin);
+				ResultSet rs = cstmt.executeQuery();
 				int count = 0;																		// Diese Count-geschichte kommt daher:
 				while (rs == null) {															// eine StoredProcedure kann mehrere ResultSet returnen
 					count++;																				// MainInfo (v1) lieferte einige Sets zureuck, von denen
-					ps.getMoreResults();														// die ersten paar null waren, -> dadher die Iteration durch
-					rs = ps.getResultSet();													// die sets, // mainInfoV2 liefert aktuell direkt das
+					cstmt.getMoreResults();														// die ersten paar null waren, -> dadher die Iteration durch
+					rs = cstmt.getResultSet();													// die sets, // mainInfoV2 liefert aktuell direkt das
 					if (count++ > 100)															// gewuenschte Set und macht dadurch dieses Handling 
 						return null;																	// unnoetig
 				}
@@ -65,6 +91,52 @@ public class DBC_WP {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+		return null;
+	}
+
+	public static FieldModel getFieldList(String user) {
+		String queryString = "{call vvsp_get_all_fieldnames (?)}";
+		try {
+			CallableStatement cstmt = DBCon.con.prepareCall(queryString);
+			cstmt.setString(1, user);
+			ResultSet rs = cstmt.executeQuery();
+			int count = 0;																		// Diese Count-geschichte kommt daher:
+			while (rs == null) {															// eine StoredProcedure kann mehrere ResultSet returnen
+				count++;																				// MainInfo (v1) lieferte einige Sets zureuck, von denen
+				cstmt.getMoreResults();														// die ersten paar null waren, -> dadher die Iteration durch
+				rs = cstmt.getResultSet();													// die sets, // mainInfoV2 liefert aktuell direkt das
+				if (count++ > 100)															// gewuenschte Set und macht dadurch dieses Handling 
+					return null;																	// unnoetig
+			}
+			return new FieldModel(rs, "FieldName");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static List<MainInfo2> getFields(String user) {
+		String queryString = "{call vvsp_get_all_fieldnames (?)}";
+		try {
+			CallableStatement cstmt = DBCon.con.prepareCall(queryString);
+			cstmt.setString(1, user);
+			ResultSet rs = cstmt.executeQuery();
+			int count = 0;																		// Diese Count-geschichte kommt daher:
+			while (rs == null) {															// eine StoredProcedure kann mehrere ResultSet returnen
+				count++;																				// MainInfo (v1) lieferte einige Sets zureuck, von denen
+				cstmt.getMoreResults();														// die ersten paar null waren, -> dadher die Iteration durch
+				rs = cstmt.getResultSet();													// die sets, // mainInfoV2 liefert aktuell direkt das
+				if (count++ > 100)															// gewuenschte Set und macht dadurch dieses Handling 
+					return null;																	// unnoetig
+			}
+			List<MainInfo2> ret = new ArrayList<MainInfo2>();
+			while (rs.next()) {
+				ret.add(new MainInfo2(rs.getString("FieldName").trim(), rs.getInt("Sequence_Num")));
+			}
+			return ret;
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -89,6 +161,102 @@ public class DBC_WP {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	//info, isin, source, null, "User", "User", "changed by User"
+	public static int patchData(FieldModel fm, String isin, String ip, String mic, String comment, String srcID, String origin) {
+		try {
+			PreparedStatement ps;
+			int stmtCount;
+			// patching edit
+			String query = "INSERT INTO vv_mastervalues_upload"
+					+ "(MVU_DATA_ORIGIN, MVU_URLSOURCE, MVU_SOURCEFILE, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
+					+ "(?,?,?,?,?,?,?,?,?);";
+			ps = DBCon.con.prepareStatement(query);
+			List<Strings2> sml;
+			int c = -1;
+			for (String k : fm.keyOrder) {
+				sml = fm.container.get(k);
+				if (k.toLowerCase().equals("isin") || sml == null || sml.size() == 0){
+					continue;
+				}
+				
+				for(Strings2 s2 : sml){
+					System.out.println(s2);
+					if(s2.str2==null||s2.str2.length()==0||s2.str2.isEmpty()||s2.str2.equals("")){
+						continue;
+					}
+					String s1 = s2.str1;
+					String fn = k;
+					if(s1 != null){
+						s1 = s1.trim();
+						if(s1.length() != 0)  fn += "."+s1;
+					}
+					c++;
+					stmtCount = 1;
+					ps.setString(stmtCount++, origin); // Data Origin
+					ps.setString(stmtCount++, ip); // url-Source
+					ps.setString(stmtCount++, "none"); 				// SourceFile
+					ps.setString(stmtCount++, srcID);
+					ps.setString(stmtCount++, isin);
+					ps.setString(stmtCount++, mic);
+					ps.setString(stmtCount++, fn);
+					ps.setString(stmtCount++, s2.str2);
+					ps.setString(stmtCount++, comment);
+					ps.executeUpdate();
+				}
+				
+			}
+			// executing upload to main table
+			stmtCount = 1;
+			ps = DBCon.con.prepareStatement("exec vvsp_import_uploadV3 ?, ?, ?, ?, ?;");
+			ps.setString(stmtCount++, srcID); // SourceId
+			ps.setString(stmtCount++, origin); // Data Origin
+			ps.setString(stmtCount++, ip); // UrlSource
+			ps.setString(stmtCount++, "none"); // SourceFile
+			ps.setString(stmtCount++, comment); // Comment
+			ps.executeUpdate();
+			return c;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public static void uplaodData(UploadContainer data) {
+		try {
+			PreparedStatement ps;
+			int stmtCount;
+			// patching edit
+			for (int i = 0; i < data.fieldName.size(); i++) {
+				if (data.values.get(i) == null || data.values.get(i) == "")
+					continue;
+				// (MVU_DATA_ORIGIN, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT)
+				ps = DBCon.con.prepareStatement(data.query);
+				stmtCount = 1;
+				ps.setString(stmtCount++, data.origin); // Data Origin
+				ps.setString(stmtCount++, data.urlSource); // url-Source
+				ps.setString(stmtCount++, "none"); 				// SourceFile
+				ps.setString(stmtCount++, data.source);
+				ps.setString(stmtCount++, data.isin);
+				ps.setString(stmtCount++, data.mic);
+				ps.setString(stmtCount++, data.fieldName.get(i));
+				ps.setString(stmtCount++, data.values.get(i));
+				ps.setString(stmtCount++, data.comment);
+				ps.executeUpdate();
+			}
+			// executing upload to main table
+			stmtCount = 1;
+			ps = DBCon.con.prepareStatement("exec vvsp_import_uploadV3 ?, ?, ?, ?, ?;");
+			ps.setString(stmtCount++, data.source); // SourceId
+			ps.setString(stmtCount++, data.origin); // Data Origin
+			ps.setString(stmtCount++, data.urlSource); // UrlSource
+			ps.setString(stmtCount++, "none"); // SourceFile
+			ps.setString(stmtCount++, data.comment); // Comment
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------
@@ -116,40 +284,6 @@ public class DBC_WP {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public static void uplaodData(UploadContainer data) {
-		try {
-			PreparedStatement ps;
-			int stmtCount;
-			// patching edit
-			for (int i = 0; i < data.fieldName.size(); i++) {
-				// (MVU_DATA_ORIGIN, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT)
-				ps = DBCon.con.prepareStatement(data.query);
-				stmtCount = 1;
-				ps.setString(stmtCount++, data.origin); // Data Origin
-				ps.setString(stmtCount++, data.urlSource); // url-Source
-				ps.setString(stmtCount++, "none"); 				// SourceFile
-				ps.setString(stmtCount++, data.source);
-				ps.setString(stmtCount++, data.isin);
-				ps.setString(stmtCount++, data.mic);
-				ps.setString(stmtCount++, data.fieldName.get(i));
-				ps.setString(stmtCount++, data.values.get(i));
-				ps.setString(stmtCount++, data.comment);
-				ps.executeUpdate();
-			}
-			// executing upload to main table
-			stmtCount = 1;
-			ps = DBCon.con.prepareStatement("exec vvsp_import_uploadV3 ?, ?, ?, ?, ?;");
-			ps.setString(stmtCount++, data.source); // SourceId
-			ps.setString(stmtCount++, data.origin); // Data Origin
-			ps.setString(stmtCount++, data.urlSource); // UrlSource
-			ps.setString(stmtCount++, "none"); // SourceFile
-			ps.setString(stmtCount++, data.comment); // Comment
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public static boolean doesIsinExist(String isin) {

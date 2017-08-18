@@ -1,5 +1,8 @@
 package de.vv.web.model.files;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class FileModel {
 	public String isin;
 	public String comment;
@@ -7,8 +10,42 @@ public class FileModel {
 	public String timeStamp;
 	public String dataOrigin;
 	public String dataType;
+	public String source;
+	public String url;
+	public boolean extern;
 
 	public FileModel() {
+	}
+
+	public FileModel(ResultSet rs) {
+		init(rs);
+	}
+
+	public void init(ResultSet rs) {
+		try {
+			int fsfkuser = rs.getInt("fs_fk_user");
+			if (fsfkuser == -2)	extern = true;
+			isin = rs.getString("fs_isin");
+			if(isin!=null)isin=isin.trim();
+			comment = rs.getString("fs_comment");
+			if(comment!=null)comment=comment.trim();
+			fileName = rs.getString("fs_filename");
+			if(fileName!=null)fileName=fileName.trim();
+			timeStamp = rs.getString("fs_timestamp");
+			if(timeStamp!=null)timeStamp=timeStamp.trim();
+			dataType = rs.getString("fs_data_type");
+			if(dataType!=null)dataType=dataType.trim();
+			dataOrigin = rs.getString("fs_data_origin");
+			if(dataOrigin!=null)dataOrigin=dataOrigin.trim();
+			source = rs.getString("fs_ip");
+			if(source!=null)source=source.trim();
+			if (extern)	url = rs.getString("fs_location");
+			else url = "unregistered User";
+			if(extern && url!=null)url=url.trim();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public FileModel(String i, String c, String f, String t, String dor, String dt) {
