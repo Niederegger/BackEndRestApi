@@ -15,6 +15,12 @@ public class FileUploadInformation {
 	public String dataOrigin;					// Quelle der Datei
 	public String dataType;						// Typ der Datei
 
+	DecimalFormat df = new DecimalFormat("0.00");
+
+	float sizeKb = 1024.0f;
+	float sizeMb = sizeKb * sizeKb;
+	float sizeGb = sizeMb * sizeKb;
+	float sizeTerra = sizeGb * sizeKb;
 
 	public FileUploadInformation() {
 	}
@@ -25,8 +31,14 @@ public class FileUploadInformation {
 		this.isin = BF.isinOfWkn(isin.trim());
 		this.dataOrigin = "unregistered User";
 		this.uploadFile = uf;
-		comment = FileHandling.getSize(uf);
-		dataType = FileHandling.getType(uf);
+		long size = uf.getSize();
+		if (size < sizeMb)
+			comment = df.format(size / sizeKb) + " Kb";
+		else if (size < sizeGb)
+			comment = df.format(size / sizeMb) + " Mb";
+		else comment = df.format(size / sizeGb) + " Gb";
+		String[] dtar = uf.getOriginalFilename().split("\\.");
+		dataType = dtar[dtar.length-1];
 		name = dataOrigin.trim() + "." + dataType;
 	}
 

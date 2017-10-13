@@ -52,11 +52,10 @@ public class FileController {
 	 */
 	@RequestMapping(value = "/uploadFile", headers = "content-type=multipart/*", method = RequestMethod.POST)
 	public @ResponseBody String uploadFileHandler(HttpServletRequest request, 
-			@RequestParam(value = "isin") String isin,
-			@RequestParam(value = "dataOrigin") String dataOrigin,
-			@RequestParam(value = "user") String userStr, 
-			@RequestParam(value = "file") MultipartFile file) {
-
+						@RequestParam(value = "isin") String isin,
+						@RequestParam(value = "dataOrigin") String dataOrigin,
+						@RequestParam(value = "user") String userStr, 
+						@RequestParam(value = "file") MultipartFile file) {
 		FileUploadInformation fui = new FileUploadInformation(isin, dataOrigin, file);
 		if (fui.valid()) {
 			try {
@@ -67,7 +66,7 @@ public class FileController {
 				String location = FileHandling.storeFile(fui, fui.isin);
 				if (location == null)
 					return "Error when saving File.";
-
+				
 				// create entry to db
 				if(user == null){
 					DBC_FileSystem.fileUploadEntry(fui.toFileData(request.getRemoteAddr(), location, -1)); // eintrag in die db
@@ -142,7 +141,6 @@ public class FileController {
 	
 	
 	/**
-	 * fetches all saved Informations of Files belonging to this ISIN
 	 * 
 	 * @param isin
 	 *          ISIN
