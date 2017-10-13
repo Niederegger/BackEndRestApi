@@ -1,17 +1,15 @@
-package de.vv.web.model;
+package de.vv.web.model.basic;
 
-public class Strings2 {
+public class DStr {
 	public String str1 = "";
 	public String str2 = "";
 
-	public Strings2(String s1, String s2) {
+	public DStr(String s1, String s2) {
 		str1 = s1;
 		str2 = s2;
 	}
 
-	
-	public Strings2() {}
-	
+	public DStr() {}
 	
 	@Override
 	public String toString() {

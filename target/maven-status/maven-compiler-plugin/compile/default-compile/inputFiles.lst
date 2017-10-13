@@ -1,45 +1,59 @@
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\maininfo\MainInfoContainer.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\IsinData.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\UploadContainer.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\maininfo\MainInfo2.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\Strings2.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\maininfo\QuellenContainer.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\functions\Scheduler.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\config\GlobalScope.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\security\TokenScheduler.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\db\DBC_Account.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\db\DBCon.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\user\UserRoleModel.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\App.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\db\DBC_WP.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\functions\MimeHandling.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\MasterValue.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\maininfo\D2Arr.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\functions\FileHandling.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\RegistrationModel.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\UpdateIsinHistory\HistoryIsinUpdatesContainer.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\security\TokenBlob.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\controller\AdviseController.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\maininfo\MainInfo.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\db\DBC_FileSystem.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\files\FileModelContainer.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\security\TokenContainer.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\files\FileUploadInformation.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\IdRow.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\security\TokenGenerator.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\maininfo\QuellenEntry.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\user\UserModel.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\maininfo\QuellenMap.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\controller\FileController.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\StringInt.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\controller\WpController.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\files\FileData.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\files\FileModel.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\user\LoginReturn.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\controller\AccountController.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\WPDModel.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\maininfo\QuellElement.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\maininfo\MainInfo2Container.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\model\UpdateIsinHistory\HistoryIsinUpdatesModel.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\functions\BasicFunctions.java
-C:\Users\Alexey Gasevic\Documents\GitHub\WebFront\src\main\java\de\vv\web\config\Config.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\functions\MailFunctions.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\db\DBCon.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\auth\AuthContainer.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\IdRow.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\maininfo\MainInfoContainer.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\controller\AdviseController.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\wp\MV_Sources_Fieldnames.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\controller\FileController.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\FieldModel.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\db\DBC_WP.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\user\UserModel.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\maininfo\QuellElement.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\functions\MimeHandling.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\maininfo\MainInfo.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\App.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\files\FileData.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\files\FileUploadInformation.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\functions\Scheduler.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\auth\AuthModel.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\config\SecurityConfiguration.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\stammdaten\QuellenSequence.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\Strings2.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\files\FileModelContainer.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\stammdaten\QuellenAngabe.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\user\UserRoleModel.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\UpdateIsinHistory\HistoryIsinUpdatesContainer.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\maininfo\D2Arr.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\StringInt.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\maininfo\QuellenEntry.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\config\Config.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\db\DBC_User.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\wp\Mapped.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\functions\BF.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\db\DBC_FileSystem.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\WPDModel.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\maininfo\MainInfo2Container.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\MasterValue.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\security\TokenGenerator.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\functions\FileHandling.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\basic\BStr.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\controller\WpController.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\UpdateIsinHistory\HistoryIsinUpdatesModel.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\security\TokenScheduler.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\maininfo\QuellenContainer.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\IsinData.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\maininfo\QuellenMap.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\wp\MappingsModel.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\stammdaten\QuellenSet.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\controller\UserController.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\RegistrationModel.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\maininfo\MainInfo2.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\wp\UnMapped.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\files\FileModel.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\config\GlobalScope.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\user\LoginReturn.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\security\TokenContainer.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\ContainerForOldThoughts\UploadContainer.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\security\TokenBlob.java
+D:\Alexey\secStart\WebFront\src\main\java\de\vv\web\model\basic\DStr.java

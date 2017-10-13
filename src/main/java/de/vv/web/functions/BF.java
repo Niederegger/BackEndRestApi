@@ -15,8 +15,17 @@ import de.vv.web.App;
 import de.vv.web.config.Config;
 import de.vv.web.db.DBC_WP;
 
-public class BasicFunctions {
+public class BF {
 
+	//--------------------------------------------------------------------------------------------------------------------
+	// Stringify
+	//--------------------------------------------------------------------------------------------------------------------
+
+	public static String trimming(String s){
+		if(s!=null) return s.trim();
+		else return s;
+	}
+	
 	//--------------------------------------------------------------------------------------------------------------------
 	// static Variables
 	//--------------------------------------------------------------------------------------------------------------------
@@ -52,6 +61,18 @@ public class BasicFunctions {
 		}
 		emailPattern = Pattern.compile(EMAIL_PATTERN);																		// compiles Email-Pattern
 		return false;
+	}
+	
+	public static Object parseJson(String str, Object o) {
+		Gson gson = new Gson();
+		try {
+			return gson.fromJson(str, o.getClass());
+		} catch (JsonSyntaxException e) {
+			System.err.println("JsonSyntaxException: " + e.getMessage());
+		} catch (JsonIOException e) {
+			System.err.println("JsonIOException: " + e.getMessage());
+		} 
+		return null;
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------
@@ -114,8 +135,14 @@ public class BasicFunctions {
 
 	public static String encodePassword(String password) {
 		//	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		//	return passwordEncoder.encode(password);
-		return password;
+		return bcpe.encode(password);
+//		return password;
+	}
+	
+	public static String decodePassword(String password) {
+		//	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		return bcpe.encode(password);
+//		return password;
 	}
 
 }

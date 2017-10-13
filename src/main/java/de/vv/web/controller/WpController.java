@@ -11,15 +11,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.vv.web.config.GlobalScope;
+import de.vv.web.db.DBC_User;
 import de.vv.web.db.DBC_WP;
-import de.vv.web.functions.BasicFunctions;
-import de.vv.web.model.*;
+import de.vv.web.functions.BF;
+import de.vv.web.model.FieldModel;
+import de.vv.web.model.user.UserModel;
+import de.vv.web.model.wp.MV_Sources_Fieldnames;
+import de.vv.web.model.wp.MappingsModel;
 import de.vv.web.model.ContainerForOldThoughts.IsinData;
 import de.vv.web.model.ContainerForOldThoughts.MasterValue;
 import de.vv.web.model.ContainerForOldThoughts.UploadContainer;
 import de.vv.web.model.ContainerForOldThoughts.WPDModel;
 import de.vv.web.model.UpdateIsinHistory.HistoryIsinUpdatesContainer;
 import de.vv.web.model.maininfo.*;
+import de.vv.web.model.stammdaten.QuellenSet;
 
 @RestController
 @RequestMapping("/api/wp")
@@ -29,6 +34,11 @@ public class WpController {
 	// In Betrieb
 	//--------------------------------------------------------------------------------------------------------------------
 
+	@RequestMapping("/isinOfWkn")
+	public String isinAC(@RequestParam(value = "v", required = true) String v) {
+		return BF.isinOfWkn(v);
+	}
+	
 	/**
 	 * isinAC - ISINs AutoComplete This Interface is used to offer an
 	 * autocomplete function when looking for ISINs,
@@ -57,13 +67,58 @@ public class WpController {
 	 */
 	@RequestMapping("/quellen")
 	public QuellenMap getQuellen(@RequestParam(value = "v") String v) {
-		v = BasicFunctions.isinOfWkn(v);
+		v = BF.isinOfWkn(v);
 		if (v != null) {
-			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).toQuellenContainer();
+			return DBC_WP.getStammdaten(BF.isinOfWkn(v)).toQuellenContainer();
+		}
+		return null;
+	}
+	
+	/**
+	 * fetches most recent Information of this ISIN with all mentioned Sources
+	 * 
+	 * @param v
+	 *          ISIN
+	 * @return QuellenMap
+	 */
+	@RequestMapping("/quellenSet")
+	public QuellenSet getQuellenSet(@RequestParam(value = "v") String v) {
+		v = BF.isinOfWkn(v);
+		if (v != null) {
+			return DBC_WP.getStammdaten(BF.isinOfWkn(v)).toQuellenSet();
 		}
 		return null;
 	}
 
+
+	@RequestMapping(value = "pushData", method = { RequestMethod.POST })
+	public String pushData(HttpServletRequest request, @RequestBody FieldModel info) {
+//		printRequestInfo(request);
+		if (request != null) {
+			String ip = request.getHeader("X-Forwarded-For") != null ? request.getHeader("X-Forwarded-For")
+					: request.getRemoteAddr();
+			if(info != null){
+
+				String isin = info.getIsin().trim();
+				if(isin != null  && isin.length() == 12){
+					if(info.user == null){ 
+//						public static int patchData(FieldModel fm, String isin, String ip, String mic, String comment, String srcID, String origin) {
+						int i = DBC_WP.patchData(info, isin, ip, null, "changed by " , "User", "unregistered User");
+						if(i >= 0) return "success";
+					} else {
+						UserModel um = DBC_User.fetchUser(info.user.email, info.user.username, info.user.token);
+						if(um != null){
+							int i = DBC_WP.patchData(info, isin, ip, null, "changed by " + info.user.username , "User", info.user.username);
+							if(i >= 0) return "success";
+						} else return "error";
+					}
+				}
+			}
+			return "error";
+		} else
+			return "Are you a Hacker?";
+	}
+	
 	/**
 	 * @param v
 	 *          ISINs
@@ -72,14 +127,32 @@ public class WpController {
 	 * @return MainInfo2[]
 	 */
 	@RequestMapping("/quellenAnsehen")
-	public MainInfo2[] getQuellenAnsehen(@RequestParam(value = "v") String v, @RequestParam(value = "s") int s) {
-		v = BasicFunctions.isinOfWkn(v);
+	public List<MainInfo2> getQuellenAnsehen(@RequestParam(value = "v") String v, @RequestParam(value = "s") int s) {
+		v = BF.isinOfWkn(v);
 		if (v != null) {
-			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).getSameSqn(s);
+			return DBC_WP.getFieldValueSours(BF.isinOfWkn(v), s).container;
 		}
 		return null;
 	}
 
+	@RequestMapping("/sourcesFields")
+	public MV_Sources_Fieldnames getSourcesFields(@RequestParam(value = "v") String v) {
+		v = BF.isinOfWkn(v);
+		if (v != null) {
+			return DBC_WP.getSourcesFields(v);
+		}
+		return null;
+	}
+	
+	@RequestMapping("/mappings")
+	public MappingsModel getMappings(@RequestParam(value = "v") String v) {
+		v = BF.isinOfWkn(v);
+		if (v != null) {
+			return DBC_WP.getMappings(v);
+		}
+		return null;
+	}
+	
 	/**
 	 * returns a single QuellEntry
 	 * 
@@ -94,13 +167,36 @@ public class WpController {
 	@RequestMapping("/quellEntry")
 	public QuellElement getQuellenElement(@RequestParam(value = "v") String v, @RequestParam(value = "sqn") int sqn,
 			@RequestParam(value = "srcn") int srcn) {
-		v = BasicFunctions.isinOfWkn(v);
+		v = BF.isinOfWkn(v);
 		if (v != null) {
-			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).toQuellElement(sqn, srcn);
+			return DBC_WP.getStammdaten(BF.isinOfWkn(v)).toQuellElement(sqn, srcn);
 		}
 		return null;
 	}
+	
+	@RequestMapping("/getFields")
+	public FieldModel getQuellenElement() {
+		return DBC_WP.getFieldList(null);
+	}
 
+	@RequestMapping(value = "editInfo2", method = { RequestMethod.POST })
+	public QuellenMap editMainInfo2(HttpServletRequest request, @RequestBody QuellenMap info) {
+		printRequestInfo(request);
+		if (request != null) {
+			UploadContainer uc = info.toUploadContainer();
+			String source = request.getHeader("X-Forwarded-For") != null ? request.getHeader("X-Forwarded-For")
+					: request.getRemoteAddr();
+			uc.setData("User", "User", source, "changed by User", ""); // source, origin, comment, mic) 
+			DBC_WP.uplaodData(uc);
+			System.out.println("Data inserted by: " + source);
+			return info;
+		} else
+			System.out.println();
+		return null;
+	}
+	
+	
+	
 	//--------------------------------------------------------------------------------------------------------------------
 	// Funktionen
 	//--------------------------------------------------------------------------------------------------------------------
@@ -123,16 +219,16 @@ public class WpController {
 
 	@RequestMapping("/Stammdaten")
 	public MainInfoContainer getStammdaten(@RequestParam(value = "v") String v) {
-		v = BasicFunctions.isinOfWkn(v);
+		v = BF.isinOfWkn(v);
 		if (v != null) {
-			return DBC_WP.getStammdaten(BasicFunctions.isinOfWkn(v)).getStammdaten();
+			return DBC_WP.getStammdaten(BF.isinOfWkn(v)).getStammdaten();
 		}
 		return null;
 	}
 
 	@RequestMapping("isin")
 	public IsinData isinData(@RequestParam(value = "v", required = true) String v) {
-		v = BasicFunctions.isinOfWkn(v);
+		v = BF.isinOfWkn(v);
 		if (v != null) { // check ob die isin wirklich 12 characters lang ist
 			System.out.println("called for isin: " + v);
 			return DBC_WP.getIsinInfo(v); // return eine Lister der Daten als Json Object
@@ -151,7 +247,7 @@ public class WpController {
 
 	@RequestMapping("info")
 	public MainInfoContainer mainInfo(@RequestParam(value = "v", required = true) String v) {
-		v = BasicFunctions.isinOfWkn(v);
+		v = BF.isinOfWkn(v);
 		if (v != null) { // check ob die isin wirklich 12 characters lang ist
 			System.out.println("MainInfo called: " + v);
 			return DBC_WP.getMainInfo(v); // return eine Lister der Daten als Json Object
@@ -177,9 +273,9 @@ public class WpController {
 
 	@RequestMapping("/distinctSources")
 	public HistoryIsinUpdatesContainer distinctSources(@RequestParam(value = "v") String v) {
-		v = BasicFunctions.isinOfWkn(v);
+		v = BF.isinOfWkn(v);
 		if (v != null) {
-			return DBC_WP.getSources(BasicFunctions.isinOfWkn(v));
+			return DBC_WP.getSources(BF.isinOfWkn(v));
 		}
 		return null;
 	}
@@ -190,7 +286,7 @@ public class WpController {
 
 	@RequestMapping("/wpd")
 	public List<WPDModel> wpd(@RequestParam(value = "isin", required = true) String isin) {
-		isin = BasicFunctions.isinOfWkn(isin);
+		isin = BF.isinOfWkn(isin);
 		if (isin != null) { // check ob die isin wirklich 12 characters lang ist
 			List<WPDModel> list = DBC_WP.getWpd(isin); // fetche die Daten aus der Db
 			return list; // return eine Lister der Daten als Json Object

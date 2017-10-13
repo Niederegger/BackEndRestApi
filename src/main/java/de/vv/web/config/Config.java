@@ -11,11 +11,13 @@ public class Config {
   "fileLocation" : "D:\\Files\\"
 }
 */
-	public String user;															// Database User
-	public String pw;																// Database Password
-	public String serverName;												// Database Server Name
-	public String dbName;														// Database DB-Name
-	public int port;																// Database Port
-	public String fileLocation = "D:\\Files\\";			// FileServer Path Location
-	public int thisPort;														// WebSite Port
+	public String user;												// Database User
+	public String pw;												// Database Password
+	public String serverName;										// Database Server Name
+	public String dbName;											// Database DB-Name
+	public int port;												// Database Port
+	public String fileLocation = "D:\\Files\\";						// FileServer Path Location
+	public int thisPort;											// WebSite Port
+	public String confirmAdress;									// url zur Verifikation
+
 }

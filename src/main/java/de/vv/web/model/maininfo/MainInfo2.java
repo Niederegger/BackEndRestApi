@@ -12,15 +12,13 @@ public class MainInfo2 {
 	//--------------------------------------------------------------------------------------------------------------------
 	
 	private String DB_sequence_num = "SEQUENCE_NUM";
-	private String DB_level1 = "LEVEL1";
-	private String DB_level2 = "LEVEL2";
+	private String DB_level1 = "fieldname";
 	private String DB_stringValue = "STRINGVALUE";
 	private String DB_data_origin = "DATA_ORIGIN";
 	private String DB_urlsource = "URLSOURCE";
 	private String DB_source_num = "SOURCE_NUM";
-	//-- 
-	public String DB_timestamp = "TimeStamp";
-	public String DB_sourceId = "Source_Id";
+	private String DB_timestamp = "record_date";
+	private String DB_sourceId = "Source_Id";
 
 	
 	//--------------------------------------------------------------------------------------------------------------------
@@ -34,7 +32,6 @@ public class MainInfo2 {
 	public String data_origin;														// Origin of this Item
 	public String urlsource;															// Url-Source of this Item
 	public int source_num;																// Priority of this Source
-	//-- 
 	public String timestamp;															// Timestamp of Entry
 	public String sourceId;																// Id of Source
 	
@@ -43,6 +40,11 @@ public class MainInfo2 {
 	//--------------------------------------------------------------------------------------------------------------------
 	
 	public MainInfo2() {}
+	
+	public MainInfo2(String fn, int sqn) {
+		level1 = fn; sequence_num = sqn;
+		normalize();
+	}
 
 	/**
 	 * used to generate an DataObject directly fetching data from ResultSet
@@ -56,19 +58,17 @@ public class MainInfo2 {
 			// Strings
 			level1 = rs.getString(DB_level1);
 			if (level1 != null)level1 = level1.trim();
-			level2 = rs.getString(DB_level2);
-			if (level2 != null)level2 = level2.trim();
 			stringValue = rs.getString(DB_stringValue);
 			if (stringValue != null)stringValue = stringValue.trim();
 			data_origin = rs.getString(DB_data_origin);
 			if (data_origin != null)data_origin = data_origin.trim();
 			urlsource = rs.getString(DB_urlsource);
 			if (urlsource != null)urlsource = urlsource.trim();
-			//-- chng
-//			sourceId = rs.getString(DB_sourceId);
-//			if (sourceId != null)sourceId = sourceId.trim();
-//			timestamp = rs.getString(DB_timestamp);
-//			if (timestamp != null)timestamp = timestamp.trim();
+			sourceId = rs.getString(DB_sourceId);
+			if (sourceId != null)sourceId = sourceId.trim();
+			timestamp = rs.getString(DB_timestamp);
+			if (timestamp != null)timestamp = timestamp.trim();
+			if(sourceId.equals("User")) urlsource = "";
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -129,7 +129,7 @@ public class MainInfo2 {
 	 * @return
 	 */
 	public QuellenEntry toQuellenEntry(StringInt[] q) {
-		return new QuellenEntry(level2, stringValue, sequence_num, source_num, urlsource, data_origin, q);
+		return new QuellenEntry(level2, stringValue, sequence_num, source_num, urlsource, data_origin, sourceId, timestamp, q);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class MainInfo2 {
 	 * @return
 	 */
 	public QuellenEntry toQuellenEntry() {
-		return new QuellenEntry(level2, stringValue, sequence_num, source_num, urlsource, data_origin, null);
+		return new QuellenEntry(level2, stringValue, sequence_num, source_num, urlsource, data_origin, sourceId, timestamp, null);
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------
@@ -156,8 +156,6 @@ public class MainInfo2 {
 		sb.append(": ");
 		sb.append(level1);
 		sb.append(",\n");
-		sb.append(DB_level2);
-		sb.append(": ");
 		sb.append(level2);
 		sb.append(",\n");
 		sb.append(DB_stringValue);

@@ -7,12 +7,6 @@ import de.vv.web.model.StringInt;
 
 
 public class QuellenContainer {
-//	public List<MainInfo2> container = new ArrayList<MainInfo2>();
-//	
-//	
-//	public void add(MainInfo2 mi2){
-//		container.add(mi2);
-//	}
 
 	public List<QuellenEntry> entries = new ArrayList<QuellenEntry>();
 	

@@ -1,6 +1,6 @@
 package de.vv.web.model;
 
-import de.vv.web.functions.BasicFunctions;
+import de.vv.web.functions.BF;
 
 // used for registration
 public class RegistrationModel {
@@ -24,7 +24,7 @@ public class RegistrationModel {
 	public boolean check() {
 		if (username != null && email != null && password != null) {
 			boolean valid = username.length() > 2 && username.length() < 32;
-			valid &= BasicFunctions.validateEmail(email);
+			valid &= BF.validateEmail(email);
 			valid &= password.length() > 5 && password.length() < 32;
 			return  valid;
 		}
