@@ -15,6 +15,7 @@ public class DBCon {
 	static CallableStatement csDeleteFileEntry;
 	static CallableStatement csGetFileEntry;
 	static CallableStatement csGetFileLocation;
+	static CallableStatement csInsertFileEntry;
 
 	/**
 	 * opening Connection to Ms SQL Database
@@ -42,7 +43,6 @@ public class DBCon {
 		try {
 			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -56,6 +56,7 @@ public class DBCon {
 			csDeleteFileEntry = con.prepareCall ("{call vvsp_delete_file_entry (?)}");
 			csGetFileEntry = con.prepareCall ("{call vvsp_get_file_entries (?)}");
 			csGetFileLocation = con.prepareCall ("{call vvsp_get_file_location (?, ?)}");
+			csInsertFileEntry = con.prepareCall ("{call vvsp_insert_file_entry (?, ?, ?, ?, ?, ?, ?, ?)}");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -68,6 +69,14 @@ public class DBCon {
 			csDeleteFileEntry.close();// = con.prepareCall ("{call vvsp_delete_file_entry (?)}");
 			csGetFileEntry.close();// = con.prepareCall ("{call vvsp_get_file_entries (?)}");
 			csGetFileLocation.close();// = con.prepareCall ("{call vvsp_get_file_location (?)}");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void checkCon(){
+		try {
+			if(con.isClosed())openConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

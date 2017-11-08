@@ -34,6 +34,7 @@ public class DBC_WP {
 				if (rs != null) return new MV_Sources_Fieldnames(rs);
 			} catch (SQLException e) {
 				e.printStackTrace();
+				DBCon.checkCon();
 			}
 		}
 		return null;
@@ -52,6 +53,7 @@ public class DBC_WP {
 				if (rs != null) return new MappingsModel(rs);
 			} catch (SQLException e) {
 				e.printStackTrace();
+				DBCon.checkCon();
 			}
 		}
 		return null;
@@ -81,6 +83,7 @@ public class DBC_WP {
 				return new MainInfo2Container(rs);
 			} catch (SQLException e) {
 				e.printStackTrace();
+				DBCon.checkCon();
 			}
 		}
 		return null;
@@ -102,6 +105,7 @@ public class DBC_WP {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -120,21 +124,17 @@ public class DBC_WP {
 				cstmt.setString(1, isin);
 				ResultSet rs = cstmt.executeQuery();
 				int count = 0; // Diese Count-geschichte kommt daher:
-				while (rs == null) { // eine StoredProcedure kann mehrere
-										// ResultSet returnen
-					count++; // MainInfo (v1) lieferte einige Sets zureuck, von
-								// denen
-					cstmt.getMoreResults(); // die ersten paar null waren, ->
-											// dadher die Iteration durch
-					rs = cstmt.getResultSet(); // die sets, // mainInfoV2
-												// liefert aktuell direkt das
-					if (count++ > 100) // gewuenschte Set und macht dadurch
-										// dieses Handling
+				while (rs == null) { // eine StoredProcedure kann mehrere ResultSet returnen
+					count++; // MainInfo (v1) lieferte einige Sets zureuck, von denen
+					cstmt.getMoreResults(); // die ersten paar null waren, -> dadher die Iteration durch
+					rs = cstmt.getResultSet(); // die sets, mainInfoV2 liefert aktuell direkt das
+					if (count++ > 100) // gewuenschte Set und macht dadurch dieses Handling
 						return null; // unnoetig
 				}
 				return new MainInfo2Container(rs);
 			} catch (SQLException e) {
 				e.printStackTrace();
+				DBCon.checkCon();
 			}
 		}
 		return null;
@@ -147,16 +147,11 @@ public class DBC_WP {
 			cstmt.setString(1, user);
 			ResultSet rs = cstmt.executeQuery();
 			int count = 0; // Diese Count-geschichte kommt daher:
-			while (rs == null) { // eine StoredProcedure kann mehrere ResultSet
-									// returnen
-				count++; // MainInfo (v1) lieferte einige Sets zureuck, von
-							// denen
-				cstmt.getMoreResults(); // die ersten paar null waren, -> dadher
-										// die Iteration durch
-				rs = cstmt.getResultSet(); // die sets, // mainInfoV2 liefert
-											// aktuell direkt das
-				if (count++ > 100) // gewuenschte Set und macht dadurch dieses
-									// Handling
+			while (rs == null) { // eine StoredProcedure kann mehrere ResultSet returnen
+				count++; // MainInfo (v1) lieferte einige Sets zureuck, von denen
+				cstmt.getMoreResults(); // die ersten paar null waren, -> dadher die Iteration durch
+				rs = cstmt.getResultSet(); // die sets, // mainInfoV2 liefert aktuell direkt das
+				if (count++ > 100) // gewuenschte Set und macht dadurch dieses Handling
 					return null; // unnoetig
 			}
 			List<MainInfo2> ret = new ArrayList<MainInfo2>();
@@ -166,6 +161,7 @@ public class DBC_WP {
 			return ret;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -180,6 +176,7 @@ public class DBC_WP {
 				return new FieldModel(rs, "FieldName");
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -202,6 +199,7 @@ public class DBC_WP {
 			return isinList;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -263,6 +261,7 @@ public class DBC_WP {
 			return c;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return -1;
 	}
@@ -311,7 +310,7 @@ public class DBC_WP {
 	// --------------------------------------------------------------------------------------------------------------------
 	// ab hier spare ich mir das Kommentieren, da diese Funktionen wieder
 	// rausgenommen wurden aus der WebSite
-	// zum teil Funktionieren diese trotzdem, und sich immernoch offen in der
+	// zum teil Funktionieren diese trotzdem, und sind immernoch offen in der
 	// RestApi
 	// --------------------------------------------------------------------------------------------------------------------
 

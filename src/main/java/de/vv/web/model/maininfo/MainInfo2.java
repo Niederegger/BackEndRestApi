@@ -25,15 +25,15 @@ public class MainInfo2 {
 	// ordinary variables:
 	//--------------------------------------------------------------------------------------------------------------------
 	
-	public int sequence_num;															// SequenceNumber (look at Filed_definitions)
-	public String level1;																	// Level 1 Header
-	public String level2;																	// Level 2 Header
+	public int sequence_num;														// SequenceNumber (look at Filed_definitions)
+	public String level1;															// Level 1 Header
+	public String level2;															// Level 2 Header
 	public String stringValue;														// StringValue of this Item
 	public String data_origin;														// Origin of this Item
-	public String urlsource;															// Url-Source of this Item
-	public int source_num;																// Priority of this Source
-	public String timestamp;															// Timestamp of Entry
-	public String sourceId;																// Id of Source
+	public String urlsource;														// Url-Source of this Item
+	public int source_num;															// Priority of this Source
+	public String timestamp;														// Timestamp of Entry
+	public String sourceId;															// Id of Source
 	
 	//--------------------------------------------------------------------------------------------------------------------
 	// Constructor

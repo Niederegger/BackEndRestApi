@@ -20,6 +20,7 @@ public class DBC_User {
 			return ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return -1;
 	}
@@ -33,6 +34,7 @@ public class DBC_User {
 			return ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return -1;
 	}
@@ -48,6 +50,7 @@ public class DBC_User {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -63,6 +66,7 @@ public class DBC_User {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -80,6 +84,7 @@ public class DBC_User {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -98,6 +103,7 @@ public class DBC_User {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -113,6 +119,7 @@ public class DBC_User {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -128,6 +135,7 @@ public class DBC_User {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -147,6 +155,7 @@ public class DBC_User {
 			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 	}
 
@@ -159,6 +168,7 @@ public class DBC_User {
 			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 	}
 
@@ -184,6 +194,7 @@ public class DBC_User {
 				return new UserModel(-2);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return new UserModel(-3);
 	}
@@ -207,6 +218,7 @@ public class DBC_User {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -229,6 +241,7 @@ public class DBC_User {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -247,6 +260,7 @@ public class DBC_User {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return true;
 	}

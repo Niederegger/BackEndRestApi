@@ -35,6 +35,7 @@ public class DBC_FileSystem {
 			return 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return -1;
 	}
@@ -75,6 +76,7 @@ public class DBC_FileSystem {
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -94,6 +96,7 @@ public class DBC_FileSystem {
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return false;
 	}
@@ -114,6 +117,7 @@ public class DBC_FileSystem {
 			return fm;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -135,6 +139,7 @@ public class DBC_FileSystem {
 			return fm;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
@@ -156,6 +161,7 @@ public class DBC_FileSystem {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			DBCon.checkCon();
 		}
 		return null;
 	}
